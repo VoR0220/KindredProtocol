@@ -5,6 +5,11 @@ import "lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol";
 import "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 import "lib/openzeppelin-contracts/contracts/interfaces/IERC4626.sol";
 
+
+// notes
+// DAI testnet address mumbai: 0x001B3B4d0F3714Ca98ba10F6042DaEbF0B1B7b6F
+// DAI testnet address optimism: 0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1 
+
 contract KindredCore {
 
 	enum PoolStage {
@@ -38,6 +43,7 @@ contract KindredCore {
 	mapping(uint256 poolId => PoolInfo) public pools;
 	mapping(address partipants => mapping(uint poolId => UserInfo)) public users;
 	mapping(address users => mapping(uint256 dueDate => bool)) public madePaymentsForDueDate;
+	mapping(address user => uint[]) poolsParticipatingIn;
 
 	uint256 internal _poolCounter;
 
@@ -47,9 +53,18 @@ contract KindredCore {
 	event BlackListed(address indexed blacklistee);
 	event FinalYieldDistribution(address[] participants, uint[] shares, uint totalEarned);
 
+	function getPoolsParticipatingIn(address user) external view returns (address[]) {
+		return poolsParticipatingIn[user];
+	}
+
+	function generateDemoTimestamps() external pure view returns (uint[]) {
+		uint base = block.timestamp + 1 minutes;
+		return [base, base * 2, base * 3, base * 4];
+	}
 
 	function register(bytes[] calldata _signatures, uint[] calldata _dueDates, bytes calldata _terms) external {
-		(uint payAmount, uint lateFee, address vault, address _erc20Addr, bytes32 termsHash) = abi.decode(_terms, (uint64, uint64, address, address, bytes32));
+		(uint payAmount, uint lateFee, address vault, address _erc20Addr, bytes32 termsHash) = abi.decode(_terms, (uint, uint, address, address, bytes32));
+		// todo: add a nonce verification
 		uint len = _signatures.length;
 		require(len == _dueDates.length, "lengths must match");
 		require(termsHash == keccak256(abi.encode(payAmount, lateFee, vault, _erc20Addr, _dueDates)), "terms don't align");
@@ -92,6 +107,7 @@ contract KindredCore {
 			// assign pool
 			UserInfo memory user = users[newUser][counter];
 			user.isParticipant = true;
+			poolsParticipatingIn[newUser].push(counter);
 			require(token.transferFrom(newUser, address(this), payAmount), "transfer failed");
 		}
 		newPool.shares = newPool.vault.deposit(currentPot, address(this));

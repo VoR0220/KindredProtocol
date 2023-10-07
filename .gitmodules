@@ -1,3 +1,6 @@
 [submodule "packages/hardhat/lib/openzeppelin-contracts"]
 	path = packages/hardhat/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts
+[submodule "packages/hardhat/lib/safe-core-protocol-demo"]
+	path = packages/hardhat/lib/safe-core-protocol-demo
+	url = https://github.com/5afe/safe-core-protocol-demo

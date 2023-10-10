@@ -21,8 +21,6 @@ contract KindredCore {
 	struct PoolInfo {
 		address[] participants;
 		uint[] dueDates; // todo: convert due dates into lower bit timestamps
-		bytes[] termsSignatures;
-		bytes32 termsHash;
 		uint256 payAmount;
 		uint256 currentPot;
 		uint256 expectedTermPot;
@@ -62,24 +60,22 @@ contract KindredCore {
 		return [base, base * 2, base * 3, base * 4];
 	}
 
-	function register(bytes[] calldata _signatures, uint[] calldata _dueDates, bytes calldata _terms) external {
-		(uint payAmount, uint lateFee, address vault, address _erc20Addr, bytes32 termsHash) = abi.decode(_terms, (uint, uint, address, address, bytes32));
-		// todo: add a nonce verification
-		uint len = _signatures.length;
-		require(len == _dueDates.length, "lengths must match");
-		require(termsHash == keccak256(abi.encode(payAmount, lateFee, vault, _erc20Addr, _dueDates)), "terms don't align");
+	function register(PoolInfo calldata poolToRegister) external {
+		require(poolToRegister.participants.length == poolToRegister.dueDates.length, "lengths must match");
 		++_poolCounter;
 
 		uint counter = _poolCounter;
 		
-		address[] memory usersList = new address[](len);
-		IERC20 token = IERC20(_erc20Addr);
-		uint timeDiff = _dueDates[1] - _dueDates[0];
+		require(poolToRegister.token != 0x0, "invalid token");
+		require(poolToRegister.vault != 0x0, "invalid vault");
+		uint timeDiff = poolToRegister.dueDates[1] - poolToRegister.dueDates[0];
 
 		// require that there's atleast one cycle of waiting to receive pay
 		require(block.timestamp < _dueDates[0] && (_dueDates[0] - block.timestamp) >= timeDiff, "need atleast one cycle to wait");
-
-		uint currentPot = payAmount * usersList.length;
+		require(poolToRegister.stage == PoolStage.Uninitialized, "should be uninitialized");
+		require(poolToRegister.shares == 0, "shares should be 0");
+		require(poolToRegister.currentPot == 0, "no funds in yet");
+		require(poolToRegister.currentDueDate == 0, "current due date needs to be set to 0");
 		// Create a new PoolInfo struct
 		PoolInfo memory newPool;
 		{
@@ -97,22 +93,22 @@ contract KindredCore {
 			newPool.stage = PoolStage.Started;
 		}
 
+		poolToRegister.stage = PoolStage.Started;
 
-		for (uint i; i < len; ++i) {
+		for (uint i; i < poolToRegister.currentDueDate.length; ++i) {
 			if (i > 0) {
 				uint calcedTimeDiff = _dueDates[i] - _dueDates[i - 1];
 				require(calcedTimeDiff == timeDiff, "dates are not equally spread");
 			}
-			address newUser = ECDSA.recover(termsHash, _signatures[i]);
+			address newUser = poolToRegister.participants[i];
 			// assign pool
 			UserInfo memory user = users[newUser][counter];
 			user.isParticipant = true;
 			poolsParticipatingIn[newUser].push(counter);
-			require(token.transferFrom(newUser, address(this), payAmount), "transfer failed");
 		}
-		newPool.shares = newPool.vault.deposit(currentPot, address(this));
+		poolToRegister.shares = newPool.vault.deposit(currentPot, address(this));
 		// Add the new pool to the pools mapping
-		pools[counter] = newPool;
+		pools[counter] = poolToRegister;
 
 		// Emit an event to indicate a new pool has been registered
 		emit PoolRegistered(counter, payAmount, usersList, _dueDates);

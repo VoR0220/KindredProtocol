@@ -3,8 +3,6 @@ dotenv.config();
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "hardhat-deploy";
-import "@matterlabs/hardhat-zksync-solc";
-import "@matterlabs/hardhat-zksync-verify";
 import "@nomicfoundation/hardhat-ethers";
 import "@nomicfoundation/hardhat-foundry";
 

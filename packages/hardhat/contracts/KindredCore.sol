@@ -31,6 +31,7 @@ contract KindredCore {
 		IERC4626 vault;
 		IERC20 token;
 		address currentRecipient;
+		bool inflationModeEnabled;
 	}
 
 	struct UserInfo {
@@ -40,7 +41,7 @@ contract KindredCore {
 
 	mapping(uint256 poolId => PoolInfo) public pools;
 	mapping(address partipants => mapping(uint poolId => UserInfo)) public users;
-	mapping(address users => mapping(uint256 dueDate => bool)) public madePaymentsForDueDate;
+	mapping(address users => mapping(uint poolId => mapping(uint256 dueDate => bool))) public madePaymentsForDueDate;
 	mapping(address user => uint[]) poolsParticipatingIn;
 
 	uint256 internal _poolCounter;
@@ -51,53 +52,45 @@ contract KindredCore {
 	event BlackListed(address indexed blacklistee);
 	event FinalYieldDistribution(address[] participants, uint[] shares, uint totalEarned);
 
-	function getPoolsParticipatingIn(address user) external view returns (address[]) {
-		return poolsParticipatingIn[user];
+	function getPoolsParticipatingIn(address user) external view returns (uint256[] memory) {
+		uint256[] memory poolIds = poolsParticipatingIn[user];
+		return poolIds;
 	}
 
-	function generateDemoTimestamps() external pure view returns (uint[]) {
+	function generateDemoTimestamps() external view returns (uint[4] memory) {
 		uint base = block.timestamp + 1 minutes;
 		return [base, base * 2, base * 3, base * 4];
 	}
 
+	function isLate(address user, uint poolId) external view returns (bool) {
+		PoolInfo memory pool = pools[poolId];
+		if (block.timestamp >= pool.dueDates[pool.currentDueDate] && !madePaymentsForDueDate[user][poolId][pool.dueDates[pool.currentDueDate]]) {
+			return true;
+		}
+		return false;
+	}
+
 	function register(PoolInfo calldata poolToRegister) external {
-		require(poolToRegister.participants.length == poolToRegister.dueDates.length, "lengths must match");
-		++_poolCounter;
+		require(poolToRegister.participants.length == poolToRegister.dueDates.length, "lengths must match");	
+		require(address(poolToRegister.token) != address(0), "invalid token");
+		require(address(poolToRegister.vault) != address(0), "invalid vault");
 
-		uint counter = _poolCounter;
-		
-		require(poolToRegister.token != 0x0, "invalid token");
-		require(poolToRegister.vault != 0x0, "invalid vault");
 		uint timeDiff = poolToRegister.dueDates[1] - poolToRegister.dueDates[0];
-
 		// require that there's atleast one cycle of waiting to receive pay
-		require(block.timestamp < _dueDates[0] && (_dueDates[0] - block.timestamp) >= timeDiff, "need atleast one cycle to wait");
+		require(block.timestamp < poolToRegister.dueDates[0] && (poolToRegister.dueDates[0] - block.timestamp) >= timeDiff, "need atleast one cycle to wait");
 		require(poolToRegister.stage == PoolStage.Uninitialized, "should be uninitialized");
 		require(poolToRegister.shares == 0, "shares should be 0");
 		require(poolToRegister.currentPot == 0, "no funds in yet");
 		require(poolToRegister.currentDueDate == 0, "current due date needs to be set to 0");
+	
+		++_poolCounter;
+
+		uint counter = _poolCounter;
 		// Create a new PoolInfo struct
-		PoolInfo memory newPool;
-		{
-			newPool.participants = usersList;
-			newPool.dueDates = _dueDates;
-			newPool.termsSignatures = _signatures;
-			newPool.termsHash = termsHash;
-			newPool.payAmount = payAmount;
-			newPool.currentPot = currentPot;
-			newPool.expectedTermPot = currentPot;
-			newPool.latefee = lateFee;
-			newPool.currentDueDate = 0;
-			newPool.vault = IERC4626(vault);
-			newPool.token = token;
-			newPool.stage = PoolStage.Started;
-		}
 
-		poolToRegister.stage = PoolStage.Started;
-
-		for (uint i; i < poolToRegister.currentDueDate.length; ++i) {
+		for (uint i; i < poolToRegister.dueDates.length; ++i) {
 			if (i > 0) {
-				uint calcedTimeDiff = _dueDates[i] - _dueDates[i - 1];
+				uint calcedTimeDiff = poolToRegister.dueDates[i] - poolToRegister.dueDates[i - 1];
 				require(calcedTimeDiff == timeDiff, "dates are not equally spread");
 			}
 			address newUser = poolToRegister.participants[i];
@@ -106,12 +99,12 @@ contract KindredCore {
 			user.isParticipant = true;
 			poolsParticipatingIn[newUser].push(counter);
 		}
-		poolToRegister.shares = newPool.vault.deposit(currentPot, address(this));
 		// Add the new pool to the pools mapping
 		pools[counter] = poolToRegister;
+		pools[counter].stage = PoolStage.Started;
 
 		// Emit an event to indicate a new pool has been registered
-		emit PoolRegistered(counter, payAmount, usersList, _dueDates);
+		emit PoolRegistered(counter, poolToRegister.payAmount, poolToRegister.participants, poolToRegister.dueDates);
 	}
 
 	function payPool(uint poolId) external {
@@ -119,25 +112,28 @@ contract KindredCore {
 		PoolInfo memory pool = pools[poolId];
 		require(user.isParticipant, "not registered to this pool");
 		require(pool.stage == PoolStage.Started, "pool finalized or not started yet");
-		require(!madePaymentsForDueDate[msg.sender][pool.dueDates[pool.currentDueDate]], "already paid");
 		
 		if (pool.dueDates[pool.currentDueDate] < block.timestamp) {
 			pool.currentDueDate++;
 		}
+		uint dueDate = pool.dueDates[pool.currentDueDate];
+		require(!madePaymentsForDueDate[msg.sender][poolId][dueDate], "already paid");
 		
 		uint payAmount;
+
+		uint previousDueDate = pool.dueDates[pool.currentDueDate - 1];
 		if (pool.currentDueDate > 0) {
-			bool onTimePay = madePaymentsForDueDate[msg.sender][pool.currentDueDate - 1];
+			bool onTimePay = madePaymentsForDueDate[msg.sender][poolId][previousDueDate];
 			if (onTimePay) {
 				payAmount = pool.payAmount;
 			} else {
-				payAmount = pool.payAmount + pool.latefee;
-				madePaymentsForDueDate[msg.sender][pool.currentDueDate - 1] = true;
+				payAmount = (pool.payAmount * 2) + pool.latefee; // might need to figure this out
+				madePaymentsForDueDate[msg.sender][poolId][pool.currentDueDate - 1] = true;
 			}
 		}
 		
 		pool.currentPot += payAmount;
-		madePaymentsForDueDate[msg.sender][pool.dueDates[pool.currentDueDate]] = true;
+		madePaymentsForDueDate[msg.sender][poolId][pool.dueDates[pool.currentDueDate]] = true;
 		bool success = pool.token.transferFrom(msg.sender, address(this), uint256(pool.payAmount));
 		require(success, "transfer didn't work");
 		uint shares = pool.vault.deposit(payAmount, address(this));
@@ -173,7 +169,7 @@ contract KindredCore {
 		uint len = pool.dueDates.length;
 		
 		for (uint i; i < len; ++i) {
-			if (!madePaymentsForDueDate[_user][pool.dueDates[i]]) {
+			if (!madePaymentsForDueDate[_user][poolId][pool.dueDates[i]]) {
 				userToBan.isBlacklisted = true;
 				break;
 			}

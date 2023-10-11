@@ -1,13 +1,39 @@
 
 import stytch, { OTPsWhatsappLoginOrCreateResponse } from 'stytch'
-import { LitAuthClient,  } from '@lit-protocol/lit-auth-client';
+import { LitAuthClient  } from '@lit-protocol/lit-auth-client';
 import { PKPEthersWallet } from '@lit-protocol/pkp-ethers'
 import { ProviderType } from '@lit-protocol/constants'
 import {AuthCallbackParams} from '@lit-protocol/types'
 import {LitActionResource, LitAbility } from '@lit-protocol/auth-helpers'
+import * as LitJsSdk from "@lit-protocol/lit-node-client";
+import ethers from 'ethers';
 
 class WhatsappKey {
 
+	async claimKeysForGroup(phoneNumbers: string[]) {
+		const client = new stytch.Client({
+			project_id: "<your project id>",
+			secret: "<your project secret>",
+		});
+
+		const lit = new LitJsSdk.LitNodeClient({
+			litNetwork: "cayenne",
+			debug: false
+		});
+
+		const addresses = []
+		for (const phoneNumber of phoneNumbers) {
+			const stytchResponse = await client.otps.whatsapp.loginOrCreate({
+    			phone_number: phoneNumber,
+			})
+			stytchResponse.user_id
+			const keyId = lit.computeHDKeyId(stytchResponse.user_id, process.env.LIT_APP_ID!)
+			const publicKey = lit.computeHDPubKey(keyId)
+			addresses.push(ethers.utils.computeAddress(publicKey)) // this should work
+		}
+
+		return addresses
+	}
 
 	async pingWhatsAppForAuth(phoneNumber: string) {
 		const stytchClient = new stytch.Client({
@@ -88,7 +114,7 @@ class WhatsappKey {
 			resourceAbilityRequests: resourceAbilities,
 			sessionKey: sessionKeyPair,
 			authNeededCallback	
-		}).catch((err) => {
+		}).catch((err: Error) => {
 			console.log("error while attempting to access session signatures: ", err)
 			throw err;
 		});

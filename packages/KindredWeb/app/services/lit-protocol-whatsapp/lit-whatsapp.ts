@@ -36,7 +36,7 @@ async function claimKeysForGroup(phoneNumbers: string[]) {
 	return addresses
 }
 
-async function  pingWhatsAppForAuth(phoneNumber: string) {
+async function pingWhatsAppForAuth(phoneNumber: string) {
 	const stytchClient = new stytch.Client({
 		project_id: process.env.STYTCH_API_KEY!,
 		secret: process.env.STYTCH_SECRET!,
@@ -47,6 +47,7 @@ async function  pingWhatsAppForAuth(phoneNumber: string) {
 	return stytchResponse
 }
 
+// once you've pinged whatsapp, this will return a PKPEthers Wallet, use that to create the Smart Contract Wallet
 async function authenticateAndGetKey(otpCode: string, stytchResp: OTPsWhatsappLoginOrCreateResponse) {
 	
 	const stytchClient = new stytch.Client({

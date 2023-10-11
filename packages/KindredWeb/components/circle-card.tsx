@@ -1,6 +1,6 @@
 import { Card } from '@/components/ui/card'
 import React, { FC, ReactNode } from 'react'
-import GlowingCircle from '@/components/ui/glowing-circle';
+import CircleSymbol from '@/components/ui/circle-symbol';
 import { Progress } from '@/components/ui/progress';
 import {
   Avatar,
@@ -28,21 +28,29 @@ interface CircleCardProps {
 }
 
 const CircleCard: FC<CircleCardProps> = ({ circleName, contribution, members, progress, vault, ...props }) => {
+  const displayedMembers = members.slice(0, 4);
+  const remainingMembers = members.length - 4;
+
   return (
     <div>
       <Card className="flex flex-col justify-between h-36 rounded-md bg-gradient-to-r from-purple-500 to-indigo-400 text-primary-foreground p-4 border-0 drop-shadow-md backdrop-blur-xl" {...props}>
         <div className="flex flex-row items-center justify-between">
           <h3>{circleName}</h3>
-          <GlowingCircle />
+          <CircleSymbol />
         </div>
         <div className="flex flex-row items-center justify-between">
           <div className="flex -space-x-2">
-            {members.map((member, index) => (
-              <Avatar key={index} className="inline-block h-6 w-6 rounded-full ring-1 ring-white dark:ring-gray-800">
+            {displayedMembers.map((member, index) => (
+              <Avatar key={index} className="h-6 w-6 rounded-full ring-1 ring-white dark:ring-gray-800">
                 <AvatarImage src={member.avatarUrl} alt={member.name} />
                 <AvatarFallback />
               </Avatar>
             ))}
+            {remainingMembers > 0 && (
+              <span className="h-6 w-6 rounded-full ring-1 ring-white dark:ring-gray-800 flex items-center justify-center bg-gray-100 text-xs text-gray-700 z-10">
+                +{remainingMembers}
+              </span>
+            )}
           </div>
           <div className="text-xs">${contribution.amount} / {contribution.period}</div>
         </div>

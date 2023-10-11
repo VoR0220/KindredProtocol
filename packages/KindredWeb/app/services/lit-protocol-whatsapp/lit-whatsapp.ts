@@ -12,8 +12,8 @@ class WhatsappKey {
 
 	async claimKeysForGroup(phoneNumbers: string[]) {
 		const client = new stytch.Client({
-			project_id: "<your project id>",
-			secret: "<your project secret>",
+			project_id: process.env.STYTCH_API_KEY!,
+			secret: process.env.STYTCH_SECRET!,
 		});
 
 		const lit = new LitJsSdk.LitNodeClient({
@@ -21,13 +21,15 @@ class WhatsappKey {
 			debug: false
 		});
 
+		await lit.connect();
+
 		const addresses = []
 		for (const phoneNumber of phoneNumbers) {
 			const stytchResponse = await client.otps.whatsapp.loginOrCreate({
     			phone_number: phoneNumber,
 			})
 			stytchResponse.user_id
-			const keyId = lit.computeHDKeyId(stytchResponse.user_id, process.env.LIT_APP_ID!)
+			const keyId = lit.computeHDKeyId(stytchResponse.user_id, process.env.LIT_PROTOCOL_API_KEY!)
 			const publicKey = lit.computeHDPubKey(keyId)
 			addresses.push(ethers.utils.computeAddress(publicKey)) // this should work
 		}

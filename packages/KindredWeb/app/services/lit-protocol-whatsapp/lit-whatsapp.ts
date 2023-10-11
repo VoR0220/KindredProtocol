@@ -39,8 +39,8 @@ class WhatsappKey {
 
 	async pingWhatsAppForAuth(phoneNumber: string) {
 		const stytchClient = new stytch.Client({
-    		project_id: "project-test-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
-    		secret: "secret-test-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    		project_id: process.env.STYTCH_API_KEY!,
+    		secret: process.env.STYTCH_SECRET!,
 		});
 		const stytchResponse = await stytchClient.otps.whatsapp.loginOrCreate({
     		phone_number: phoneNumber,
@@ -51,13 +51,13 @@ class WhatsappKey {
 	async authenticateAndGetKey(otpCode: string, stytchResp: OTPsWhatsappLoginOrCreateResponse) {
 		
 		const stytchClient = new stytch.Client({
-    		project_id: "project-test-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
-    		secret: "secret-test-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    		project_id: process.env.STYTCH_API_KEY!,
+    		secret: process.env.STYTCH_SECRET!,
 		});
 		const authResponse = await stytchClient.otps.authenticate({
 			method_id: stytchResp.phone_id,
 			code: otpCode,
-			session_duration_minutes: 60 * 24 * 7,
+			session_duration_minutes: 60 * 24 * 7, // a day to authenticate
 		})
  
 		const sessionStatus = await stytchClient.sessions.authenticate({
@@ -66,13 +66,13 @@ class WhatsappKey {
 
 		const litClient = new LitAuthClient({
 			litRelayConfig: {
-				relayApiKey: '<Your Lit Relay Server API Key from the previous step>',
+				relayApiKey: process.env.LIT_PROTOCOL_API_KEY!,
 			}
 		});
 		
 		const session = litClient.initProvider(ProviderType.StytchOtp, {
 			userId: sessionStatus.session.user_id,
-			appId: "project-test-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+			appId: process.env.LIT_PROTOCOL_API_KEY!
 		})
 		
 		const authMethod = await session.authenticate({ 
@@ -83,7 +83,7 @@ class WhatsappKey {
 		const pkps = await session.fetchPKPsThroughRelayer(authMethod)
 
 		const litNodeClient = new LitNodeClientNodeJs({
-			litNetwork: 'serrano',
+			litNetwork: 'cayenne',
 			debug: false,
 		})
 		await litNodeClient.connect();

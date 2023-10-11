@@ -18,11 +18,20 @@ const CirclesList = () => {
         {
           name: "Olivia Silva",
           avatarUrl:"https://randomuser.me/api/portraits/thumb/women/10.jpg",
-        },{
+        }, {
           name: "Pippa Silva",
           avatarUrl:"https://randomuser.me/api/portraits/thumb/women/12.jpg",
-        },{
-          name: "Drew Silva",
+        }, {
+          name: "Drew Silva 1",
+          avatarUrl:"https://randomuser.me/api/portraits/thumb/men/8.jpg",
+        }, {
+          name: "Drew Silva 2",
+          avatarUrl:"https://randomuser.me/api/portraits/thumb/men/8.jpg",
+        }, {
+          name: "Drew Silva 3",
+          avatarUrl:"https://randomuser.me/api/portraits/thumb/men/8.jpg",
+        }, {
+          name: "Drew Silva 4",
           avatarUrl:"https://randomuser.me/api/portraits/thumb/men/8.jpg",
         },
       ],

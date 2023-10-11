@@ -1,5 +1,6 @@
 import SectionHeader from "@/components/section-header"
 import CirclesList from "@/components/circles-list"
+import ActivityList from "@/components/activity-list"
 
 export default function Dashboard() {
   return (
@@ -10,7 +11,7 @@ export default function Dashboard() {
       </section>
       <section className="w-full max-w-sm mb-8">
         <SectionHeader title="Recent activity" hasMenu={false} />
-        {/* <ActivityList></ActivityList> */}
+        <ActivityList></ActivityList>
       </section>
     </main>
   )

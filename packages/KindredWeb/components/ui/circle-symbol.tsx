@@ -1,6 +1,6 @@
 import { Circle } from 'lucide-react';
 
-const GlowingCircle = () => {
+const CircleSymbol = () => {
   return (
     <div className="relative w-8 h-8"> {/* Set width and height to match the size of the circles */}
       <Circle className="absolute top-0 left-0 blur-sm w-8 h-8" />
@@ -9,4 +9,4 @@ const GlowingCircle = () => {
   );
 };
 
-export default GlowingCircle;
+export default CircleSymbol;

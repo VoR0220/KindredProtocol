@@ -9,7 +9,7 @@ import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import ethers from 'ethers';
 
 
-async function claimKeysForGroup(phoneNumbers: string[]) {
+export async function claimKeysForGroup(phoneNumbers: string[]) {
 	const client = new stytch.Client({
 		project_id: process.env.STYTCH_API_KEY!,
 		secret: process.env.STYTCH_SECRET!,
@@ -36,7 +36,7 @@ async function claimKeysForGroup(phoneNumbers: string[]) {
 	return addresses
 }
 
-async function pingWhatsAppForAuth(phoneNumber: string) {
+export async function pingWhatsAppForAuth(phoneNumber: string) {
 	const stytchClient = new stytch.Client({
 		project_id: process.env.STYTCH_API_KEY!,
 		secret: process.env.STYTCH_SECRET!,
@@ -48,7 +48,7 @@ async function pingWhatsAppForAuth(phoneNumber: string) {
 }
 
 // once you've pinged whatsapp, this will return a PKPEthers Wallet, use that to create the Smart Contract Wallet
-async function authenticateAndGetKey(otpCode: string, stytchResp: OTPsWhatsappLoginOrCreateResponse) {
+export async function authenticateAndGetKey(otpCode: string, stytchResp: OTPsWhatsappLoginOrCreateResponse) {
 	
 	const stytchClient = new stytch.Client({
 		project_id: process.env.STYTCH_API_KEY!,
@@ -123,7 +123,7 @@ async function authenticateAndGetKey(otpCode: string, stytchResp: OTPsWhatsappLo
 
 	const pkpWallet = new PKPEthersWallet({
 		pkpPubKey: pkps[pkps.length - 1].publicKey,
-		rpc: "<standard RPC URL for the chain you are using>", // e.g. https://rpc.ankr.com/eth_goerli
+		rpc: "https://rpc.ankr.com/polygon_mumbai", // e.g. https://rpc.ankr.com/eth_goerli
 		controllerSessionSigs: sessionSigs
 	});
 	

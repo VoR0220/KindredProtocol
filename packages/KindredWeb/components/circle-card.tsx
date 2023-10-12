@@ -47,7 +47,7 @@ const CircleCard: FC<CircleCardProps> = ({ circleName, contribution, members, pr
               </Avatar>
             ))}
             {remainingMembers > 0 && (
-              <span className="h-6 w-6 rounded-full ring-1 ring-white dark:ring-gray-800 flex items-center justify-center bg-gray-100 text-xs text-gray-700 z-10">
+              <span className="h-6 w-6 rounded-full ring-2 ring-white dark:ring-gray-800 flex items-center justify-center bg-gray-100 text-xs text-gray-400 z-10">
                 +{remainingMembers}
               </span>
             )}

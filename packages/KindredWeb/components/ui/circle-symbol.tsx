@@ -1,10 +1,16 @@
+import React from 'react';
 import { Circle } from 'lucide-react';
 
-const CircleSymbol = () => {
+interface CircleSymbolProps {
+  color?: string;
+  size?: string;
+}
+
+const CircleSymbol: React.FC<CircleSymbolProps> = ({ color = "currentColor", size = "w-8 h-8" }) => {
   return (
-    <div className="relative w-8 h-8"> {/* Set width and height to match the size of the circles */}
-      <Circle className="absolute top-0 left-0 blur-sm w-8 h-8" />
-      <Circle className="absolute top-0 left-0 w-8 h-8" />
+    <div className={`relative ${size}`}>
+      <Circle className={`absolute top-0 left-0 blur-sm ${size}`} color={color} />
+      <Circle className={`absolute top-0 left-0 ${size}`} color={color} />
     </div>
   );
 };

@@ -26,6 +26,7 @@
       "@/lib": ["./lib"],
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "types": ["jest"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx","**/*.test.ts", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }

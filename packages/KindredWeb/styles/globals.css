@@ -15,9 +15,13 @@
 
     --primary: #2400FF;
     --primary-foreground: #ffffff;
-
+    
+    --primary-50: #E5E0FF;
     --primary-100: #d3ccff;
+    --primary-200: #A799FF;
     --primary-400: #5033FF;
+    --primary-500: #2400FF;
+    --primary-600: #1900B3;
     --primary-700: #160099;
 
     --secondary: #f1f5f9;

@@ -117,7 +117,7 @@ export default function CreateCircle() {
   useEffect(() => {      
       const isValid = stepValidations[step] ? stepValidations[step]() : true;
       setIsStepValid(isValid);
-  }, [circleData, step]);
+  }, [circleData, step, stepValidations]);
 
   return (
     <Sheet>

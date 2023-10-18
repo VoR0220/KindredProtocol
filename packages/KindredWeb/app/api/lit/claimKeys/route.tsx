@@ -44,7 +44,8 @@ export async function GET(request: NextRequest, response: NextResponse) {
     litNodeClient,
   });
 
-	const addresses = []
+	const addresses: string[] = [];
+
 	for (const phoneNumber of phoneNumbers) {
 		const stytchResponse = await client.otps.whatsapp.loginOrCreate({
 			phone_number: phoneNumber,

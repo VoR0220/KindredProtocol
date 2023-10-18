@@ -67,15 +67,7 @@ export default function CreateCircle() {
   const [circleData, setCircleData] = useState<CircleData>(initialCircleData);
   const [isStepValid, setIsStepValid] = useState<boolean>(false);
   
-  // Pre-submission validations
-  const stepValidations = [
-    () => circleData.agreeToTerms,  // Validation for step 0
-    () => circleData.circleName.length >= 5, // Validation for step 1
-    () => !!circleData.payPeriod,  // Validation for step 2
-    () => circleData.contributionAmount > 0 && !!circleData.currency,  // Validation for step 3
-    () => circleData.vaultOption >= 1 && !!circleData.yield,  // Validation for step 4
-    () => circleData.members.length > 0,  // Validation for step 5
-  ];
+
   
   // Method for handling all changes to inputs. Updates parent state.
   const handleChangeInput = (change: InputChange) => {
@@ -114,10 +106,19 @@ export default function CreateCircle() {
   };
 
   // Hook that updates the validity of the current step
-  useEffect(() => {      
+  useEffect(() => {  
+      // Pre-submission validations
+      const stepValidations = [
+        () => circleData.agreeToTerms,  // Validation for step 0
+        () => circleData.circleName.length >= 5, // Validation for step 1
+        () => !!circleData.payPeriod,  // Validation for step 2
+        () => circleData.contributionAmount > 0 && !!circleData.currency,  // Validation for step 3
+        () => circleData.vaultOption >= 1 && !!circleData.yield,  // Validation for step 4
+        () => circleData.members.length > 0,  // Validation for step 5
+      ];    
       const isValid = stepValidations[step] ? stepValidations[step]() : true;
       setIsStepValid(isValid);
-  }, [circleData, step, stepValidations]);
+  }, [circleData, step]);
 
   return (
     <Sheet>

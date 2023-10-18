@@ -62,8 +62,8 @@ export async function GET(request: NextRequest, response: NextResponse) {
         appId: "project-test-1c809a1a-25f9-406a-b39a-d05cfbf2f49a",
       }
     );
-    const publicKey = await session.computePublicKeyFromAuthMethod(authMethod);
-    console.log("local public key computed: ", publicKey);
+    // const publicKey = await session.computePublicKeyFromAuthMethod(authMethod);
+    // console.log("local public key computed: ", publicKey);
 		// const publicKey = lit.computeHDPubKey(keyId)
     // console.log("Public Key:" + publicKey);
 		//addresses.push(ethers.utils.computeAddress(publicKey)) // this should work

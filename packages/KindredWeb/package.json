@@ -43,6 +43,7 @@
     "react": "^18",
     "react-day-picker": "^8.8.2",
     "react-dom": "^18",
+    "stytch": "^9.0.4",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "validator": "^13.11.0"

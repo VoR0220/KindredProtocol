@@ -27,8 +27,12 @@ module.exports = {
           DEFAULT: "var(--primary)",
           foreground: "var(--primary-foreground)",
           "700": "var(--primary-700)",
+          "600": "var(--primary-600)",
+          "500": "var(--primary-500)",
           "400": "var(--primary-400)",
+          "200": "var(--primary-200)",
           "100": "var(--primary-100)",
+          "50": "var(--primary-50)",
         },
         secondary: {
           DEFAULT: "var(--secondary)",
@@ -78,5 +82,6 @@ module.exports = {
   },
   plugins: [
     require("tailwindcss-animate"),
+    require('@tailwindcss/forms'),
   ],
 }

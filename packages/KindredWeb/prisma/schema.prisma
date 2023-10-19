@@ -6,6 +6,126 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
+
+model User {
+  id             String       @id @default(cuid())
+  name           String?      @db.VarChar(256)
+  email          String?      @unique
+  phoneNumber    String       @unique @db.VarChar(15)
+  role           Role         @default(MEMBER)
+  createdAt      DateTime     @default(now()) @map(name: "created_at")
+  updatedAt      DateTime     @updatedAt @map(name: "updated_at")
+  createdCircles Circle[]     @relation("CreatedCircles")
+  invitations    Invitation[] // Relation to invitations sent to this user
+
+  @@unique([phoneNumber, email])
+  @@index([email, name])
+}
+
+model Circle {
+  id                 String       @id @default(cuid())
+  name               String       @db.VarChar(256)
+  description        String?
+  createdAt          DateTime     @default(now()) @map(name: "created_at")
+  updatedAt          DateTime     @updatedAt @map(name: "updated_at")
+  agreeToTerms       Boolean      @default(false)
+  payPeriod          PayPeriod
+  currency           String
+  contributionAmount Decimal      @db.Decimal(10, 2)
+  inflationMode      Boolean
+  vaultOption        Int
+  yieldPercentage    Float
+  creator            User         @relation("CreatedCircles", fields: [creatorId], references: [id])
+  creatorId          String
+  invited            Invitation[] // Relation to invitations for this circle
+}
+
+model Invitation {
+  id          String       @id @default(cuid())
+  email       String?
+  phoneNumber String
+  status      InviteStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  invitedBy   User         @relation(fields: [invitedById], references: [id])
+  invitedById String
+  circle      Circle       @relation(fields: [circleId], references: [id])
+  circleId    String
+
+  @@unique([phoneNumber, circleId]) // Assuming an email uniquely identifies an invitee within a circle
+  @@index([status])
+}
+
+enum PayPeriod {
+  MONTHLY
+  WEEKLY
+  BIWEEKLY
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+// Object representing a User
+// model User {
+//   id             String       @id @default(cuid())
+//   name           String?      @db.VarChar(256)
+//   email          String?      @unique
+//   phoneNumber    String       @db.VarChar(15)
+//   createdAt      DateTime     @default(now()) @map(name: "created_at")
+//   updatedAt      DateTime     @updatedAt @map(name: "updated_at")
+//   createdCircles Circle[]     @relation("CreatedCircles")
+//   memberships    Membership[]
+// @@unique([phoneNumber, email, name])
+// @@index([email, name])
+// }
+
+// Object representing a Circle
+// model Circle {
+//   id                 String             @id @default(cuid())
+//   title              String             @db.VarChar(256)
+//   description        String?
+//   createdAt          DateTime           @default(now()) @map(name: "created_at")
+//   updatedAt          DateTime           @updatedAt @map(name: "updated_at")
+//   agreeToTerms       Boolean            @default(false)
+//   payPeriod          String
+//   currency           String
+//   contributionAmount Decimal            @db.Decimal(10, 2)
+//   inflationMode      Boolean
+//   vaultOption        Int
+//   yield              Float
+//   creator            User               @relation("CreatedCircles", fields: [creatorId], references: [id])
+//   creatorId          String
+//   membership         MembersOfCircles[]
+// }
+
+// Object representing a membership
+// model Membership {
+//   id      String             @id @default(cuid())
+//   user    User               @relation(fields: [userId], references: [id])
+//   userId  String
+//   circles MembersOfCircles[]
+// }
+
+// Object respresenting a user's membership in a circle
+// model MembersOfCircles {
+//   circle       Circle     @relation(fields: [circleId], references: [id])
+//   circleId     String
+//   membership   Membership @relation(fields: [membershipId], references: [id])
+//   membershipId String
+//   assignedAt   DateTime   @default(now()) @map(name: "assigned_at")
+//   assignedBy   String
+
+//   @@id([circleId, membershipId])
+// }

@@ -43,7 +43,7 @@ const CreateCircle4: React.FC<CreateCircleStepProps> = ({ circleData, handleChan
 
     if (yieldMapping[option]) {
         handleChangeInput?.({
-          name: 'yield',
+          name: 'yieldPercentage',
           value: yieldMapping[option],
         });
         setErrorMessage("");

@@ -15,7 +15,7 @@ const CreateCircle1: React.FC<CreateCircleStepProps> = ({ circleData, handleChan
     } else {
       setErrorMessage(""); // Clear the error message if input is valid
     }
-    handleChangeInput?.({ name: 'circleName', value: e.target.value});
+    handleChangeInput?.({ name: 'name', value: e.target.value});
   };
 
   return (
@@ -28,11 +28,11 @@ const CreateCircle1: React.FC<CreateCircleStepProps> = ({ circleData, handleChan
           <p>This is what will be displayed for everyone.</p>
           <div className="flex flex-row mt-4">
             <Input
-              name="circleName"
+              name="name"
               type="text"
               placeholder='i.e. "Super Tanda"'
               onChange={handleInputChangeWithValidation}
-              value={circleData.circleName}
+              value={circleData.name}
             />
           </div>
           <div className="w-full">

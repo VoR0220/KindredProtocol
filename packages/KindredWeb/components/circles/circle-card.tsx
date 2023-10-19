@@ -19,7 +19,7 @@ interface Member {
 }
 
 interface CircleCardProps {
-  circleName: string;
+  name: string;
   contribution: Contribution;
   members: Member[];
   vault: number;
@@ -27,7 +27,7 @@ interface CircleCardProps {
   [key: string]: any;  // For ...props spread to support any additional props
 }
 
-const CircleCard: FC<CircleCardProps> = ({ circleName, contribution, members, progress, vault, ...props }) => {
+const CircleCard: FC<CircleCardProps> = ({ name, contribution, members, progress, vault, ...props }) => {
   const displayedMembers = members.slice(0, 4);
   const remainingMembers = members.length - 4;
 
@@ -35,7 +35,7 @@ const CircleCard: FC<CircleCardProps> = ({ circleName, contribution, members, pr
     <div>
       <Card className="flex flex-col justify-between h-36 rounded-md bg-gradient-to-r from-purple-500 to-indigo-400 text-primary-foreground p-4 border-0 drop-shadow-md backdrop-blur-xl" {...props}>
         <div className="flex flex-row items-center justify-between">
-          <h3>{circleName}</h3>
+          <h3>{name}</h3>
           <CircleSymbol />
         </div>
         <div className="flex flex-row items-center justify-between">

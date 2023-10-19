@@ -130,14 +130,14 @@ export default function CreateCircle() {
       participants: circleData.members,
       dueDates,
       payAmount: circleData.contributionAmount,
-      currentPot: 0,
+      currentPot: 0, // this is always 0
       expectedTermPot: circleData.contributionAmount * circleData.members.length,
-      latefee: 0,
-      shares: 0,
-      currentDueDate: 0,
-      stage: 0,
+      latefee: 0, // this can be set but for now leave it at 0
+      shares: 0, // this is always 0
+      currentDueDate: 0, // this is always 0
+      stage: 0, // this is always 0
       vault: vaultOptionMap[circleData.vaultOption],
-      token: 'StablecoinAddressHere'
+      token: 'StablecoinAddressHere' // fill this in 
     }) 
   };
 

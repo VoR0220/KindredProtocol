@@ -15,6 +15,7 @@
     "@lit-protocol/lit-node-client-nodejs": "^2.2.61",
     "@lit-protocol/pkp-ethers": "^2.2.61",
     "@lit-protocol/types": "^2.2.61",
+    "@prisma/client": "^5.4.2",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-checkbox": "^1.0.4",

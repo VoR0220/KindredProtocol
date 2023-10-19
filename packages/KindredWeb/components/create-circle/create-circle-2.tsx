@@ -27,15 +27,15 @@ const CreateCircle2: React.FC<CreateCircleStepProps> = ({ circleData, handleChan
           <div className="flex flex-row mt-4">
             <RadioGroup value={selectedPayPeriod} onValueChange={handleRadioChange}>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="weekly" id="option-1" />
+                <RadioGroupItem value="WEEKLY" id="option-1" />
                 <Label htmlFor="option-1">Weekly</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="bi-weekly" id="option-2" />
+                <RadioGroupItem value="BIWEEKLY" id="option-2" />
                 <Label htmlFor="option-2">Bi-weekly</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="monthly" id="option-3" />
+                <RadioGroupItem value="MONTHLY" id="option-3" />
                 <Label htmlFor="option-3">Monthly</Label>
               </div>
             </RadioGroup>

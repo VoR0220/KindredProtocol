@@ -19,45 +19,43 @@ import CreateCircle6 from '@/components/create-circle/create-circle-6'
 
 export interface CircleData {
   agreeToTerms: boolean;
-  circleName: string;
+  name: string;
   payPeriod: string;
   currency: string;
-  contributionAmount: number;
+  contributionAmount: number | null;
   inflationMode: boolean;
   vaultOption: number;
-  yield: number;
+  yieldPercentage: number;
   invited: string[];
-  members: string[];
 }
 
 const initialCircleData = {
   agreeToTerms: false,
-  circleName: "",
-  payPeriod: "monthly",
+  name: "",
+  payPeriod: "MONTHLY",
   currency: "usd",
-  contributionAmount: 0,
+  contributionAmount: null,
   inflationMode: false,
   vaultOption: 0,
-  yield: 0,
+  yieldPercentage: 0,
   invited: [],
-  members: [],
 }
 
 export interface InputChange {
   name: string;
-  value: string | number | boolean | string[];
+  value: string | number | boolean | string[] | null;
 }
 
 export interface CreateCircleStepProps {
   circleData: {
       agreeToTerms: boolean;
-      circleName: string;
+      name: string;
       payPeriod: string;
       currency: string;
       inflationMode: boolean;
-      contributionAmount: number;
+      contributionAmount: number | null;  
       vaultOption: number;
-      members: string[];
+      invited: string[];
   };
   handleChangeInput?: (change: InputChange) => void;
 }
@@ -66,8 +64,7 @@ export default function CreateCircle() {
   const [step, setStep] = useState<number>(0);
   const [circleData, setCircleData] = useState<CircleData>(initialCircleData);
   const [isStepValid, setIsStepValid] = useState<boolean>(false);
-  
-
+  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'loading' | 'succeeded' | 'failed'>('idle');
   
   // Method for handling all changes to inputs. Updates parent state.
   const handleChangeInput = (change: InputChange) => {
@@ -92,8 +89,23 @@ export default function CreateCircle() {
   const MAX_STEP = circleConfiguration.length - 1;
 
   //Handle navigation - increments the step state to control which Component to render
-  const handleNextStep = () => step < MAX_STEP && setStep(prevStep => prevStep + 1);
   const handlePrevStep = () => step > 0 && setStep(prevStep => prevStep - 1);
+  const handleNextStep = async () => {
+    if (step < MAX_STEP - 1) {
+      setStep((prevStep) => prevStep + 1);
+    } else if (step === MAX_STEP - 1) {
+      try {
+        setSubmissionStatus('loading');
+        await handleSubmitCreateCircleData(); // make sure this function is async and awaits the API call
+        setSubmissionStatus('succeeded');
+        setStep(MAX_STEP); // move to the last step, the success page
+      } catch (error) {
+        console.error(error);
+        setSubmissionStatus('failed'); // handle the error appropriately
+      }
+    }
+  };
+  
 
   // Config for the current step
   const currentConfig = circleConfiguration[step];
@@ -102,7 +114,17 @@ export default function CreateCircle() {
   // We need a method to do final operation
   const handleSubmitCreateCircleData = () => {
     // Validation and submit form data here
-
+    try {
+      fetch('/api/create-circle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(circleData)
+      })
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   // Hook that updates the validity of the current step
@@ -110,11 +132,11 @@ export default function CreateCircle() {
       // Pre-submission validations
       const stepValidations = [
         () => circleData.agreeToTerms,  // Validation for step 0
-        () => circleData.circleName.length >= 5, // Validation for step 1
+        () => circleData.name.length >= 5, // Validation for step 1
         () => !!circleData.payPeriod,  // Validation for step 2
-        () => circleData.contributionAmount > 0 && !!circleData.currency,  // Validation for step 3
-        () => circleData.vaultOption >= 1 && !!circleData.yield,  // Validation for step 4
-        () => circleData.members.length > 0,  // Validation for step 5
+        () => circleData.contributionAmount != null && circleData.contributionAmount > 0 && !!circleData.currency,  // Validation for step 3
+        () => circleData.vaultOption >= 1 && !!circleData.yieldPercentage,  // Validation for step 4
+        () => circleData.invited.length > 0,  // Validation for step 5
       ];    
       const isValid = stepValidations[step] ? stepValidations[step]() : true;
       setIsStepValid(isValid);
@@ -133,7 +155,8 @@ export default function CreateCircle() {
           circleData={circleData}
           handleChangeInput={currentConfig.handleChange || (() => {})}
         />
-        <CreateCircleFooter 
+        <CreateCircleFooter
+          submissionStatus={submissionStatus}
           handleNextStep={handleNextStep} 
           isStepValid={isStepValid}
           step={step}

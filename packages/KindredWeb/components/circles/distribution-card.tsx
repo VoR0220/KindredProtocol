@@ -19,7 +19,7 @@ import { Progress } from '../ui/progress';
 // }
 
 interface DistributionCardProps {
-  // circleName: string;
+  // name: string;
   // contribution: Contribution;
   // members: Member[];
   // vault: number;
@@ -27,7 +27,7 @@ interface DistributionCardProps {
   // [key: string]: any;  // For ...props spread to support any additional props
 }
 
-// const DistributionCard: FC<DistributionCardProps> = ({ circleName, contribution, members, progress, vault, ...props }) => {
+// const DistributionCard: FC<DistributionCardProps> = ({ name, contribution, members, progress, vault, ...props }) => {
 const DistributionCard: FC<DistributionCardProps> = ({...props}) => {
   return (
     <>

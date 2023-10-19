@@ -10,7 +10,7 @@ export default function CirclesList(){
   /* * * * * * */
   const circles = [
     {
-      circleName: "Silva Family Savings",
+      name: "Silva Family Savings",
       contribution: {
         amount: 100,
         period: "month",
@@ -49,7 +49,7 @@ export default function CirclesList(){
         {circles.map((circle, index) => (
           <CarouselItem key={index}>
             <CircleCard
-              circleName={circle.circleName}
+              name={circle.name}
               contribution={circle.contribution}
               members={circle.members}
               progress={circle.progress}

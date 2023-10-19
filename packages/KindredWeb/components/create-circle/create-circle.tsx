@@ -15,7 +15,8 @@ import CreateCircle3 from '@/components/create-circle/create-circle-3'
 import CreateCircle4 from '@/components/create-circle/create-circle-4'
 import CreateCircle5 from '@/components/create-circle/create-circle-5'
 import CreateCircle6 from '@/components/create-circle/create-circle-6'
-
+import { KindredCore__factory } from '../../../hardhat/typechain-types'
+import {ethers} from 'ethers'
 
 export interface CircleData {
   agreeToTerms: boolean;
@@ -28,6 +29,10 @@ export interface CircleData {
   yield: number;
   invited: string[];
   members: string[];
+}
+
+const vaultOptionMap: {[ key: number]: string} = {
+  0: "0x83F20F44975D03b1b09e64809B757c47f942BEeA" // fucking shit this address isn't available on mumbai
 }
 
 const initialCircleData = {
@@ -108,9 +113,32 @@ export default function CreateCircle() {
   const CurrentCircleComponent = currentConfig.component;
 
   // We need a method to do final operation
-  const handleSubmitCreateCircleData = () => {
+  const handleSubmitCreateCircleData = async () => {
     // Validation and submit form data here
-
+    const provider = new ethers.providers.JsonRpcProvider('https://rpc.ankr.com/polygon_mumbai');
+    const kindred = KindredCore__factory.connect('kindredCoreAddressHere', provider)
+    // todo: create a function to get this according to selected duration
+    let dueDates: number[] = [
+        new Date().getTime() + 60,
+        new Date().getTime() + 60 * 2,
+        new Date().getTime() + 60 * 3,
+        new Date().getTime() + 60 * 4
+    ]
+    // todo: Julio, I need you to take a look at this and make sure this works with whatever
+    // wagmi hooks it needs to
+    await kindred.register({
+      participants: circleData.members,
+      dueDates,
+      payAmount: circleData.contributionAmount,
+      currentPot: 0, // this is always 0
+      expectedTermPot: circleData.contributionAmount * circleData.members.length,
+      latefee: 0, // this can be set but for now leave it at 0
+      shares: 0, // this is always 0
+      currentDueDate: 0, // this is always 0
+      stage: 0, // this is always 0
+      vault: vaultOptionMap[circleData.vaultOption],
+      token: 'StablecoinAddressHere' // fill this in 
+    }) 
   };
 
   // Hook that updates the validity of the current step

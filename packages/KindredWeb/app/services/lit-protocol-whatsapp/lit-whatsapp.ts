@@ -8,35 +8,34 @@ import {LitActionResource, LitAbility } from '@lit-protocol/auth-helpers'
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import ethers from 'ethers';
 const publicKeyToAddress = require('ethereum-public-key-to-address')
-import Safe, { SafeFactory, SafeAccountConfig, PredictedSafeProps, EthersAdapter, SafeDeploymentConfig } from '@safe-global/protocol-kit'
+import Safe, { SafeAccountConfig, PredictedSafeProps, EthersAdapter, SafeDeploymentConfig } from '@safe-global/protocol-kit'
 
 async function claimKeysForGroup(phoneNumbers: string[]) {
 	const client = new stytch.Client({
-			project_id: process.env.STYTCH_API_KEY!,
-			secret: process.env.STYTCH_SECRET!,
-		});
+		project_id: process.env.STYTCH_API_KEY!,
+		secret: process.env.STYTCH_SECRET!,
+	});
 
-		const lit = new LitJsSdk.LitNodeClient({
-			litNetwork: "cayenne",
-			debug: false
-		});
+	const lit = new LitJsSdk.LitNodeClient({
+		litNetwork: "cayenne",
+		debug: false
+	});
 
-		await lit.connect();
+	await lit.connect();
 
-		const pubKeys = []
-		for (const phoneNumber of phoneNumbers) {
-			const stytchResponse = await client.otps.whatsapp.loginOrCreate({
-				phone_number: phoneNumber,
-			})
-			stytchResponse.user_id
-			const keyId = lit.computeHDKeyId(stytchResponse.user_id, process.env.LIT_PROTOCOL_API_KEY!)
-			console.log("Key Id: ", keyId.substring(2))
+	const pubKeys = []
+	for (const phoneNumber of phoneNumbers) {
+		const stytchResponse = await client.otps.whatsapp.loginOrCreate({
+			phone_number: phoneNumber,
+		})
+
+		const keyId = lit.computeHDKeyId(stytchResponse.user_id, process.env.LIT_PROTOCOL_API_KEY!)
+		console.log("Key Id: ", keyId.substring(2))
 		const publicKey = lit.computeHDPubKey(keyId.substring(2))
 		console.log("Public key: ", publicKey)
 
-			pubKeys.push(publicKey)
-		//addresses.push(ethers.utils.computeAddress(publicKey)) // this should work
-		}
+		pubKeys.push(publicKey)
+	}
 
 	const provider = new ethers.providers.JsonRpcProvider('https://rpc.ankr.com/polygon_mumbai');
 	const addresses: string[] = []
@@ -45,19 +44,19 @@ async function claimKeysForGroup(phoneNumbers: string[]) {
 		const voidSigner = new ethers.VoidSigner(addr)
 		const voidSignerConnected = voidSigner.connect(provider)
 		const safeAccountConfig: SafeAccountConfig = {
-		owners: [addr],
-		threshold: 1
+			owners: [addr],
+			threshold: 1
 		}
 		const safeDeploymentConfig: SafeDeploymentConfig = {
-		saltNonce: "1"
+			saltNonce: "1"
 		}
 		const predictedSafe: PredictedSafeProps = {
-		safeAccountConfig,
-		safeDeploymentConfig
+			safeAccountConfig,
+			safeDeploymentConfig
 		}
 		const ethAdapter = new EthersAdapter({
-		ethers,
-		signerOrProvider: voidSignerConnected
+			ethers,
+			signerOrProvider: voidSignerConnected
 		})
 		const safeSdk: Safe = await Safe.create({ethAdapter, predictedSafe})
 		addresses.push(await safeSdk.getAddress())

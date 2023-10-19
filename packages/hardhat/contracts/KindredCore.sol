@@ -30,8 +30,6 @@ contract KindredCore {
 		PoolStage stage;
 		IERC4626 vault;
 		IERC20 token;
-		address currentRecipient;
-		bool inflationModeEnabled;
 	}
 
 	struct UserInfo {
@@ -82,7 +80,7 @@ contract KindredCore {
 		require(poolToRegister.shares == 0, "shares should be 0");
 		require(poolToRegister.currentPot == 0, "no funds in yet");
 		require(poolToRegister.currentDueDate == 0, "current due date needs to be set to 0");
-	
+		require(poolToRegister.expectedTermPot == poolToRegister.payAmount * poolToRegister.participants.length, "invalid expected term pot");
 		++_poolCounter;
 
 		uint counter = _poolCounter;

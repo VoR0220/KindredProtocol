@@ -1,6 +1,5 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { KindredCore } from "../typechain-types";
 import { Signer, getAddress } from 'ethers';
 import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
 import { PoolInfoStruct, KindredCore } from '../typechain-types/contracts/KindredCore';

@@ -37,7 +37,7 @@ async function claimKeysForGroup(phoneNumbers: string[]) {
 		pubKeys.push(publicKey)
 	}
 
-	const provider = new ethers.providers.JsonRpcProvider('https://rpc.ankr.com/polygon_mumbai');
+	const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_PROVIDER_URL!);
 	const addresses: string[] = []
 	for (const pubKey of pubKeys) {
 		const addr = publicKeyToAddress(pubKey)
@@ -151,7 +151,7 @@ async function authenticateAndGetKey(otpCode: string, stytchResp: OTPsWhatsappLo
 
 	const pkpWallet = new PKPEthersWallet({
 		pkpPubKey: pkps[pkps.length - 1].publicKey,
-		rpc: "<standard RPC URL for the chain you are using>", // e.g. https://rpc.ankr.com/eth_goerli
+		rpc: process.env.RPC_PROVIDER_URL!, // e.g. https://rpc.ankr.com/eth_goerli
 		controllerSessionSigs: sessionSigs
 	});
 	

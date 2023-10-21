@@ -26,6 +26,10 @@ const CreateCircle2: React.FC<CreateCircleStepProps> = ({ circleData, handleChan
           <p>This is how often everyone contributes.</p>
           <div className="flex flex-row mt-4">
             <RadioGroup value={selectedPayPeriod} onValueChange={handleRadioChange}>
+            <div className="flex items-center space-x-2">
+                <RadioGroupItem value="LUDICROUS" id="option-0" />
+                <Label htmlFor="option-0">Ludicrous</Label>
+              </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="WEEKLY" id="option-1" />
                 <Label htmlFor="option-1">Weekly</Label>

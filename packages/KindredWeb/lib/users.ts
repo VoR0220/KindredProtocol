@@ -1,4 +1,16 @@
 import prisma from '@/lib/prisma';
+
+export interface User {
+	id: string;
+	name: string | null;
+	email: string | null;
+	phoneNumber: string;
+	createdAt: Date;
+	updatedAt: Date;
+	role?: 'ADMIN' | 'MEMBER';
+	profilePicture: string | null;
+  }
+
 /********************/
 /*   User Queries   */
 /********************/
@@ -38,44 +50,25 @@ export async function getUserByPhoneNumber(phoneNumber: string) {
 	return user;
 }
 
-/*   Update User(s)  */
-export async function updateUserById(id: string, name: string, phoneNumber: string) {
-	const updatedUser = await prisma.user.update({
-		where: { id: id },
-		data: {
-			name: name,
-			phoneNumber: phoneNumber,
+// Get user members by circle id
+export async function getMembersByCircleId(circleId: string) {
+	let members;
+
+	const circleWithMembers = await prisma.circle.findUnique({
+		where: {
+		  id: circleId,
+		},
+		include: {
+		  members: {
+			select: {
+			  user: true, // Selects all user fields
+			},
+		  },
 		},
 	});
-	return updatedUser;
-}
-// export async function updateUserByName(name: string, newName: string, newPhoneNumber: string) {
-// 	const updatedUser = await prisma.user.update({
-// 		where: { name: name },
-// 		data: {
-// 			name: newName,
-// 			phoneNumber: newPhoneNumber,
-// 		},
-// 	});
-// 	return updatedUser;
-// }
-
-/*   Delete User(s)  */
-export async function deleteUserById(id: string) {
-	const deletedUser = await prisma.user.delete({
-		where: { id: id },
-	});
-	return deletedUser;
-}
-// export async function deleteUserByName(name: string) {
-// 	const deletedUser = await prisma.user.delete({
-// 		where: { name: name },
-// 	});
-// 	return deletedUser;
-// }
-export async function deleteUserByPhoneNumber(phoneNumber: string) {
-	const deletedUser = await prisma.user.delete({
-		where: { phoneNumber: phoneNumber },
-	});
-	return deletedUser;
+  
+	  if (circleWithMembers) {
+		members = circleWithMembers.members.map(member => member.user);
+	  }
+	  return members;
 }

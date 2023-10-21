@@ -19,12 +19,17 @@ const CreateCircle3: React.FC<CreateCircleStepProps> = ({ circleData, handleChan
   const [contributionValue, setContributionValueValue] = useState<number | null>(null);
 
   const handleContributionAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value === '' ? null : parseFloat(e.target.value);
-    setContributionValueValue(newValue);
-    handleChangeInput?.({
-      name: 'contributionAmount',
-      value: contributionValue,
-    });
+    const newValue = e.target.value;
+    if (newValue === '') {
+      setContributionValueValue(null);
+    } else {
+      const parsedValue = parseFloat(newValue);
+      setContributionValueValue(parsedValue);
+      handleChangeInput?.({
+        name: 'contributionAmount',
+        value: parsedValue,
+      });
+    }
   };
 
   const handleCurrencyChange = (selectedCurrency: string) => {

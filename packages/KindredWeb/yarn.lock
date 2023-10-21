@@ -3417,6 +3417,45 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@uploadthing/mime-types@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@uploadthing/mime-types@npm:0.2.1"
+  checksum: f8b6984d8626cab7dea10a008a01023289652e4d04fcec8ad94c27d8f247f04a5b9eaa593dd21fde98a4a363931f343375019c2b81de075815b0cdf5b5366661
+  languageName: node
+  linkType: hard
+
+"@uploadthing/react@npm:^5.7.0":
+  version: 5.7.0
+  resolution: "@uploadthing/react@npm:5.7.0"
+  dependencies:
+    "@uploadthing/shared": ^5.2.5
+    attr-accept: ^2.2.2
+    file-selector: ^0.6.0
+    tailwind-merge: ^1.13.2
+  peerDependencies:
+    next: "*"
+    react: ^17.0.2 || ^18.0.0
+    uploadthing: ^5.0.0
+  peerDependenciesMeta:
+    next:
+      optional: true
+  checksum: 829102cd4d69e026cb6aad4d99fc80dd3935753eaeec6ee1a2fb77b8fd23e0680b3a082868cbcd9ad9784b2371241c74f5b1c4d31383b015186f1ff4548c8805
+  languageName: node
+  linkType: hard
+
+"@uploadthing/shared@npm:^5.2.5":
+  version: 5.2.5
+  resolution: "@uploadthing/shared@npm:5.2.5"
+  peerDependencies:
+    "@uploadthing/mime-types": ^0.2.0
+    zod: ^3.22.3
+  peerDependenciesMeta:
+    "@uploadthing/mime-types":
+      optional: true
+  checksum: 67d29248ee5dcfe50b77662fec6d5c5197c6be79e3206e9058940eb8ab47d1cdac9db4a63d48deaea99df098608949e7f963f9e6be354a8746fe9c58d0ecefee
+  languageName: node
+  linkType: hard
+
 "@walletconnect/core@npm:2.9.2":
   version: 2.9.2
   resolution: "@walletconnect/core@npm:2.9.2"
@@ -4109,6 +4148,13 @@ __metadata:
   version: 1.0.0
   resolution: "atomic-sleep@npm:1.0.0"
   checksum: b95275afb2f80732f22f43a60178430c468906a415a7ff18bcd0feeebc8eec3930b51250aeda91a476062a90e07132b43a1794e8d8ffcf9b650e8139be75fa36
+  languageName: node
+  linkType: hard
+
+"attr-accept@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "attr-accept@npm:2.2.2"
+  checksum: 496f7249354ab53e522510c1dc8f67a1887382187adde4dc205507d2f014836a247073b05e9d9ea51e2e9c7f71b0d2aa21730af80efa9af2d68303e5f0565c4d
   languageName: node
   linkType: hard
 
@@ -5041,6 +5087,13 @@ __metadata:
   version: 1.2.0
   resolution: "decamelize@npm:1.2.0"
   checksum: ad8c51a7e7e0720c70ec2eeb1163b66da03e7616d7b98c9ef43cce2416395e84c1e9548dd94f5f6ffecfee9f8b94251fc57121a8b021f2ff2469b2bae247b8aa
+  languageName: node
+  linkType: hard
+
+"decimal.js@npm:^10.4.3":
+  version: 10.4.3
+  resolution: "decimal.js@npm:10.4.3"
+  checksum: 796404dcfa9d1dbfdc48870229d57f788b48c21c603c3f6554a1c17c10195fc1024de338b0cf9e1efe0c7c167eeb18f04548979bcc5fdfabebb7cc0ae3287bae
   languageName: node
   linkType: hard
 
@@ -6156,6 +6209,15 @@ __metadata:
   dependencies:
     flat-cache: ^3.0.4
   checksum: f49701feaa6314c8127c3c2f6173cfefff17612f5ed2daaafc6da13b5c91fd43e3b2a58fd0d63f9f94478a501b167615931e7200e31485e320f74a33885a9c74
+  languageName: node
+  linkType: hard
+
+"file-selector@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "file-selector@npm:0.6.0"
+  dependencies:
+    tslib: ^2.4.0
+  checksum: 7d051b6e5d793f3c6e2ab287ba5e7c2c6a0971bccc9d56e044c8047ba483e18f60fc0b5771c951dc707c0d15f4f36ccb4f1f1aaf385d21ec8f7700dadf8325ba
   languageName: node
   linkType: hard
 
@@ -7948,11 +8010,13 @@ __metadata:
     "@types/react": ^18
     "@types/react-dom": ^18
     "@types/validator": ^13.11.2
+    "@uploadthing/react": ^5.7.0
     autoprefixer: ^10
     bufferutil: ^4.0.8
     class-variance-authority: ^0.7.0
     clsx: ^2.0.0
     date-fns: ^2.30.0
+    decimal.js: ^10.4.3
     eslint: ^8
     eslint-config-next: 13.5.4
     ethers: ^5.7.2
@@ -7974,8 +8038,10 @@ __metadata:
     tailwindcss: ^3
     tailwindcss-animate: ^1.0.7
     typescript: ^5
+    uploadthing: ^5.7.2
     utf-8-validate: ^6.0.3
     validator: ^13.11.0
+    zod: ^3.22.4
   languageName: unknown
   linkType: soft
 
@@ -10865,7 +10931,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwind-merge@npm:^1.14.0":
+"tailwind-merge@npm:^1.13.2, tailwind-merge@npm:^1.14.0":
   version: 1.14.0
   resolution: "tailwind-merge@npm:1.14.0"
   checksum: 8cf5d37f51b3b32e4bdd5544feaed34357bfba2f64f14834cc4a21ac29b0ae22d7255386467a0f1dadb3e38499389efbbabeddcd0b16571af5a0d346a4921877
@@ -11333,6 +11399,16 @@ __metadata:
   bin:
     update-browserslist-db: cli.js
   checksum: 1e47d80182ab6e4ad35396ad8b61008ae2a1330221175d0abd37689658bdb61af9b705bfc41057fd16682474d79944fb2d86767c5ed5ae34b6276b9bed353322
+  languageName: node
+  linkType: hard
+
+"uploadthing@npm:^5.7.2":
+  version: 5.7.2
+  resolution: "uploadthing@npm:5.7.2"
+  dependencies:
+    "@uploadthing/mime-types": ^0.2.1
+    "@uploadthing/shared": ^5.2.5
+  checksum: 8df74c7ebb2e84e21119a0710663314f594c1e5bf986b244f63cb77ee9d3f69e486598e5d369bd1d8af7cd3fc71baeb3341a6cdf835946a572b04bea7b0239f8
   languageName: node
   linkType: hard
 
@@ -12150,5 +12226,12 @@ __metadata:
   peerDependencies:
     ethers: ^5.7.0
   checksum: f702a3437f48a8d42c4bb35b8dd13671a168aadfc4e23ce723d62959220ccb6bf9c529c60331fe5b91afaa622147c6a37490551474fe3e35c06ac476524b5160
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.22.4":
+  version: 3.22.4
+  resolution: "zod@npm:3.22.4"
+  checksum: 80bfd7f8039b24fddeb0718a2ec7c02aa9856e4838d6aa4864335a047b6b37a3273b191ef335bf0b2002e5c514ef261ffcda5a589fb084a48c336ffc4cdbab7f
   languageName: node
   linkType: hard

@@ -9,8 +9,6 @@ import { Wallet2 } from 'lucide-react'
 import { Calendar } from 'lucide-react'
 import { PlusCircle } from 'lucide-react'
 import { TrendingUp } from 'lucide-react'
-
-
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -20,21 +18,39 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-
+import { getCircleById } from "@/lib/circles"
+import Decimal from 'decimal.js';
+import { formatPayPeriod } from "@/lib/circles"
 
 type CardProps = React.ComponentProps<typeof Card>
 
-export default function Circle() {
+export default async function Circle({
+  params: { id },
+}: {
+  params: { id: string }
+}) {
+  const circle = await getCircleById(id)
+
+  if (!circle) {
+    return null;
+  }
+
   return (
     <>
       <Section>
         <Container>
-          <SectionHeader title="Testing" hasMenu={false} />
+          <SectionHeader title={circle.name} hasMenu={false} />
         </Container>
         <Container>
-          <Navigation />
+          <Navigation id={id}/>
           <div className="bg-primary-700 rounded-lg p-4 mt-6">
-            <DistributionCard />
+            <DistributionCard
+              yieldPercentage={circle.yieldPercentage}
+              contributionAmount={new Decimal(circle.contributionAmount).toNumber()}
+              members={circle.members.map(member => member.user)}
+              vault={circle?.vaultOption}
+              payPeriod={circle.payPeriod}
+            />
             <div>
               <div className="flex">
                 <div className="flex w-0 flex-1">
@@ -42,7 +58,7 @@ export default function Circle() {
                     <Users2 />
                     <div>
                       <h5>Members</h5>
-                      <p className="font-light">6</p>
+                      <p className="font-light">{circle.members.length}</p>
                     </div>
                   </div>
                 </div>
@@ -51,7 +67,7 @@ export default function Circle() {
                     <CalendarCheck />
                     <div>
                       <h5>Pay schedule</h5>
-                      <p className="font-light">Monthly</p>
+                      <p className="font-light capitalize">{formatPayPeriod(circle.payPeriod)}</p>
                     </div>
                   </div>
                 </div>
@@ -89,7 +105,7 @@ export default function Circle() {
               <div className="flex items-center space-x-2 rounded-b-md border p-4">
                 <div className="flex-1 space-y-1">
                   <p className="text-3xl font-medium leading-none">
-                    $100
+                    ${Number(circle.contributionAmount).toFixed(2)}
                   </p>
                 </div>
               </div>

@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useState } from "react";
 import axios from 'axios';
+import { ProviderType } from "@lit-protocol/constants";
+import { LitAuthClient } from "@lit-protocol/lit-auth-client";
 
 interface IStytchResponse {
     phone_id: string;
@@ -14,6 +16,16 @@ interface IStytchResponse {
     status_code: number;
     user_created: boolean;
     user_id: string;
+}
+
+interface ISessionStatus {
+    request_id: string;
+    session_jwt: string;
+    session_token: string;
+    status_code: number;
+    session: {
+        user_id: string;
+    };
 }
 
 export default function SignIn() {
@@ -24,6 +36,8 @@ export default function SignIn() {
 
     let stytchResponse: IStytchResponse = new Object() as IStytchResponse;
     const [stytchResponseState, setStytchResponseState] = useState(stytchResponse);
+    let sessionStatus: ISessionStatus = new Object() as ISessionStatus;
+    const [sessionStatusResponse, setSessionStatusResponse] = useState(Object() as ISessionStatus);
 
     const processOTP = async () => {
         let otpInput = '';
@@ -38,8 +52,36 @@ export default function SignIn() {
                 console.log(stytchResponseState);
                 const response = await axios.post(`/api/lit/authorization?otpInput=${encodeURIComponent(otpInput)}&method_id=${encodeURIComponent(stytchResponseState.phone_id)}`);  
                 console.log(response);
+                sessionStatus = response.data.sessionStatus;
+                setSessionStatusResponse(sessionStatus);
+                console.log(sessionStatusResponse);
+
+                // *******************
+
+                const litClient = new LitAuthClient({
+                    litRelayConfig: {
+                        relayApiKey: 'fbb8ccef-963b-4717-8e80-26ed20646d79_kindred',
+                    }
+                });
+                 
+                const session = litClient.initProvider(ProviderType.StytchOtp, {
+                    userId: sessionStatus.session.user_id,
+                    appId: "project-test-1c809a1a-25f9-406a-b39a-d05cfbf2f49a"
+                })
+                 
+                const authMethod = await session.authenticate({ 
+                    accessToken: sessionStatus.session_jwt 
+                })
+                 
+                await session.mintPKPThroughRelayer(authMethod)
+                const pkps = await session.fetchPKPsThroughRelayer(authMethod)
+
+                console.log(pkps);
+
+                // *******************
         
-              } catch {
+              } catch(error) {
+                console.log(error);
                 setIsError(true);
                 resetPasscode();
               }

@@ -12,6 +12,7 @@ import { PKPEthersWallet } from '@lit-protocol/pkp-ethers'
 
 export async function createSafe(key: PKPEthersWallet): Promise<AccountAbstraction> {
 	const relayPack = new GelatoRelayPack(process.env.GELATO_RELAY_API_KEY!)
+	key.rpcProvider = new ethers.providers.JsonRpcProvider("https://rpc-mumbai.maticvigil.com");
 	const safeAccountAbstraction = new AccountAbstraction(key)
   	const sdkConfig: AccountAbstractionConfig = {
     	relayPack

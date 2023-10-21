@@ -17,6 +17,7 @@ import { PKPEthersWallet } from "@lit-protocol/pkp-ethers";
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { ethers } from "ethers";
 import { createSafe } from "../services/safe/safe-aa";
+
 interface IStytchResponse {
     phone_id: string;
     request_id: string;
@@ -91,8 +92,9 @@ export default function SignIn() {
                 // *******************
               
                 const litNodeClient = new LitJsSdk.LitNodeClient({
-                  litNetwork: "cayenne",
-                  debug: false
+                  litNetwork: "cayenne", //'serrano', //"cayenne",
+                  alertWhenUnauthorized: false,
+                  debug: true,
                 });
               
                 await litNodeClient.connect();
@@ -118,7 +120,7 @@ export default function SignIn() {
                         pkpPublicKey: pkps[pkps.length - 1].publicKey,
                         expiration: params.expiration,
                         resources: params.resources,
-                        chainId: 1,
+                        chainId: 80001,
                     });
                     return response.authSig;
                 };
@@ -140,7 +142,7 @@ export default function SignIn() {
 
                 const pkpWallet = new PKPEthersWallet({
                   pkpPubKey: pkps[pkps.length - 1].publicKey,
-                  rpc: "https://polygon-mumbai-bor.publicnode.com", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis // https://polygon-mumbai-bor.publicnode.com
+                  rpc: "https://rpc-mumbai.maticvigil.com", // "https://rpc.ankr.com/polygon_mumbai", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis // https://polygon-mumbai-bor.publicnode.com
                   controllerSessionSigs: sessionSigs
                 });
                 
@@ -163,7 +165,7 @@ export default function SignIn() {
 
 
                 // *******************
-                router.push("/dashboard");
+                //router.push("/dashboard");
                 // *******************
         
               } catch(error) {

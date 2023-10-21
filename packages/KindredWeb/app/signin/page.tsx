@@ -93,7 +93,8 @@ export default function SignIn() {
               
                 const litNodeClient = new LitJsSdk.LitNodeClient({
                   litNetwork: "cayenne",
-                  debug: false
+                  alertWhenUnauthorized: false,
+                  debug: true,
                 });
               
                 await litNodeClient.connect();
@@ -121,7 +122,7 @@ export default function SignIn() {
                           pkpPublicKey: pkps[pkps.length - 1].publicKey,
                           expiration: params.expiration,
                           resources: params.resources,
-                          chainId: 1,
+                          chainId: 80001,
                       });
                       return response.authSig;
                   };
@@ -144,7 +145,7 @@ export default function SignIn() {
                 
                   wallet = new PKPEthersWallet({
                     pkpPubKey: pkps[pkps.length - 1].publicKey,
-                    rpc: "https://polygon-mumbai-bor.publicnode.com", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis // https://polygon-mumbai-bor.publicnode.com
+                    rpc: "https://rpc-mumbai.maticvigil.com", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis // https://polygon-mumbai-bor.publicnode.com
                     controllerSessionSigs: sessionSigs
                   });
                   
@@ -158,6 +159,12 @@ export default function SignIn() {
 
                   const signResult = await wallet.signMessage("Welcome to Kindred!");
                   console.log(signResult);
+
+                  //const provider = new ethers.providers.JsonRpcProvider("https://rpc-mumbai.maticvigil.com");
+                  //await wallet.setRpc("https://rpc-mumbai.maticvigil.com");
+                  //wallet.connect();
+                  //(wallet as PKPEthersWallet).connect();
+
               } catch (err: any) {
                 console.error('error: ', err)
                 console.log("Creating new wallet from random priv key!")
@@ -167,7 +174,11 @@ export default function SignIn() {
 
               console.log("trying to create a safe")
 
-              const createSafeResult = await createSafe(wallet);
+              const w2 = (wallet as ethers.Signer);
+
+              console.log(w2.provider);
+
+              const createSafeResult = await createSafe(w2);
 
               console.log("get address: ", await createSafeResult.getSafeAddress());
 

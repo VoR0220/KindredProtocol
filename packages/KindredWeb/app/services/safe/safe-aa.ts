@@ -10,9 +10,15 @@ import {
 import { ethers, Signer } from 'ethers'
 import { PKPEthersWallet } from '@lit-protocol/pkp-ethers'
 
-export async function createSafe(key: PKPEthersWallet | ethers.Wallet): Promise<AccountAbstraction> {
+export async function createSafe(wallet: PKPEthersWallet | ethers.Wallet | ethers.Signer): Promise<AccountAbstraction> {
 	const relayPack = new GelatoRelayPack(process.env.GELATO_RELAY_API_KEY!)
-	const safeAccountAbstraction = new AccountAbstraction(key)
+
+	console.log(wallet);
+
+	//const provider = new ethers.providers.JsonRpcProvider("https://rpc-mumbai.maticvigil.com");
+    //const signer = new ethers.Wallet(wallet, provider);
+
+	const safeAccountAbstraction = new AccountAbstraction(wallet)
   	const sdkConfig: AccountAbstractionConfig = {
     	relayPack
  	}

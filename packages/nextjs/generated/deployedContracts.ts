@@ -8,33 +8,6 @@ const contracts = {
           address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
           abi: [
             {
-              inputs: [],
-              name: "ECDSAInvalidSignature",
-              type: "error",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "uint256",
-                  name: "length",
-                  type: "uint256",
-                },
-              ],
-              name: "ECDSAInvalidSignatureLength",
-              type: "error",
-            },
-            {
-              inputs: [
-                {
-                  internalType: "bytes32",
-                  name: "s",
-                  type: "bytes32",
-                },
-              ],
-              name: "ECDSAInvalidSignatureS",
-              type: "error",
-            },
-            {
               anonymous: false,
               inputs: [
                 {
@@ -61,12 +34,6 @@ const contracts = {
                   internalType: "uint256[]",
                   name: "shares",
                   type: "uint256[]",
-                },
-                {
-                  indexed: false,
-                  internalType: "uint256",
-                  name: "totalEarned",
-                  type: "uint256",
                 },
               ],
               name: "FinalYieldDistribution",
@@ -189,11 +156,72 @@ const contracts = {
               type: "function",
             },
             {
+              inputs: [],
+              name: "generateDemoTimestamps",
+              outputs: [
+                {
+                  internalType: "uint256[4]",
+                  name: "",
+                  type: "uint256[4]",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+              ],
+              name: "getPoolsParticipatingIn",
+              outputs: [
+                {
+                  internalType: "uint256[]",
+                  name: "",
+                  type: "uint256[]",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "isLate",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
               inputs: [
                 {
                   internalType: "address",
                   name: "users",
                   type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
                 },
                 {
                   internalType: "uint256",
@@ -236,11 +264,6 @@ const contracts = {
               name: "pools",
               outputs: [
                 {
-                  internalType: "bytes32",
-                  name: "termsHash",
-                  type: "bytes32",
-                },
-                {
                   internalType: "uint256",
                   name: "payAmount",
                   type: "uint256",
@@ -276,18 +299,13 @@ const contracts = {
                   type: "uint8",
                 },
                 {
-                  internalType: "contract IERC4626",
+                  internalType: "contract CometMainInterface",
                   name: "vault",
                   type: "address",
                 },
                 {
                   internalType: "contract IERC20",
                   name: "token",
-                  type: "address",
-                },
-                {
-                  internalType: "address",
-                  name: "currentRecipient",
                   type: "address",
                 },
               ],
@@ -297,19 +315,66 @@ const contracts = {
             {
               inputs: [
                 {
-                  internalType: "bytes[]",
-                  name: "_signatures",
-                  type: "bytes[]",
-                },
-                {
-                  internalType: "uint256[]",
-                  name: "_dueDates",
-                  type: "uint256[]",
-                },
-                {
-                  internalType: "bytes",
-                  name: "_terms",
-                  type: "bytes",
+                  components: [
+                    {
+                      internalType: "address[]",
+                      name: "participants",
+                      type: "address[]",
+                    },
+                    {
+                      internalType: "uint256[]",
+                      name: "dueDates",
+                      type: "uint256[]",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "payAmount",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "currentPot",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "expectedTermPot",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "latefee",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "shares",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint8",
+                      name: "currentDueDate",
+                      type: "uint8",
+                    },
+                    {
+                      internalType: "enum KindredCore.PoolStage",
+                      name: "stage",
+                      type: "uint8",
+                    },
+                    {
+                      internalType: "contract CometMainInterface",
+                      name: "vault",
+                      type: "address",
+                    },
+                    {
+                      internalType: "contract IERC20",
+                      name: "token",
+                      type: "address",
+                    },
+                  ],
+                  internalType: "struct KindredCore.PoolInfo",
+                  name: "poolToRegister",
+                  type: "tuple",
                 },
               ],
               name: "register",

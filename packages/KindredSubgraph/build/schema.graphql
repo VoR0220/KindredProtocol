@@ -1,0 +1,46 @@
+type BlackListed @entity(immutable: true) {
+  id: Bytes!
+  blacklistee: Bytes! # address
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type FinalYieldDistribution @entity(immutable: true) {
+  id: Bytes!
+  participants: [Bytes!]! # address[]
+  shares: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type LoanTaken @entity(immutable: true) {
+  id: Bytes!
+  user: Bytes! # address
+  amount: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PaymentMade @entity(immutable: true) {
+  id: Bytes!
+  user: Bytes! # address
+  amount: BigInt! # uint256
+  poolId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type PoolRegistered @entity(immutable: true) {
+  id: Bytes!
+  poolId: BigInt! # uint256
+  payAmount: BigInt! # uint256
+  users: [Bytes!]! # address[]
+  dueDates: [BigInt!]! # uint256[]
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}

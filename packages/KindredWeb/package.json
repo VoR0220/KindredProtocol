@@ -40,6 +40,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
+    "decimal.js": "^10.4.3",
     "ethereum-public-key-to-address": "^0.0.5",
     "ethers": "5.7.0",
     "fs": "^0.0.1-security",

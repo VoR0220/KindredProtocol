@@ -5,78 +5,14 @@ import { Section } from "@/components/ui/section"
 import { MoreVertical } from 'lucide-react'
 import Image from "next/image";
 import { getMembersByCircleId } from "@/lib/users"
-
-type UserStatus = 'late' | 'blacklisted' | 'good' | 'pending';
-
-type User = {
-  name: string;
-  username: string;
-  imageUrl: string;
-  isOnline: boolean;
-  status: UserStatus;
-};
-
-interface MenuVisibleState {
-  [index: number]: boolean;
-}
-
-const initialUsers: User[] = [
-  {
-    name: "Leslie Alexander",
-    username: "@lesliealexander",
-    imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    isOnline: true,
-    status: 'good',
-  },
-  {
-    name: "Beslie Alexander",
-    username: "@lesliealexander",
-    imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    isOnline: true,
-    status: 'pending',
-  },
-  {
-    name: "Teslie Alexander",
-    username: "@lesliealexander",
-    imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    isOnline: true,
-    status: 'blacklisted',
-  },
-  {
-    name: "Feslie Alexander",
-    username: "@lesliealexander",
-    imageUrl: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    isOnline: true,
-    status: 'late',
-  },
-];
-
-
-
+import Status from "@/components/circles/status"
 
 export default async function Members({
   params: { id },
 }: {
   params: { id: string }
 }) {
-  // const [users, setUsers] = useState<User[]>([]);
-  // const [menuVisible, setMenuVisible] = useState<MenuVisibleState>({});
-  
   const members = await getMembersByCircleId(id);
-
-  console.log("result", members);
-  // useEffect(() => {
-  //   // call function to fetch users
-  //   setUsers(initialUsers)
-  // }, []);
-
-  // const toggleMenu = (index: number) => {
-  //   setMenuVisible(prevState => ({
-  //     ...prevState,
-  //     [index]: !prevState[index]
-  //   }));
-  // };
-
   return (
     <Section>
       <Container>
@@ -102,6 +38,9 @@ export default async function Members({
                     </span>
                     <div className="ml-4 truncate">
                       <p className="truncate text-sm font-medium text-gray-900">{member.name === null ? 'Unknown' : member.name}</p>
+                    </div>
+                    <div className="ml-4 truncate">
+                      <Status status={member.status === null ? 'PENDING' : member.status}/>
                     </div>
                   </div>
                 </a>

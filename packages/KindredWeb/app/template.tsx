@@ -13,7 +13,7 @@ export default function Template({
       <main className="flex flex-col min-h-screen items-center">
         {children}
       </main>
-      {/* <Navbar /> */}
+      <Navbar />
       {/* <Footer/> */}
     </>
   )

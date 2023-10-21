@@ -19,7 +19,6 @@ export default function Dashboard() {
           <ActivityList></ActivityList>
         </Container>
       </section>
-      <Navbar />
     </>
   )
 }

@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { buttonVariants } from "@/components/ui/button"
 import { Home } from 'lucide-react'
 
 import { User2 } from 'lucide-react'

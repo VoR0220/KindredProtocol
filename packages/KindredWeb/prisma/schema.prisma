@@ -6,6 +6,70 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("KINDRED_PRISMA_URL") // uses connection pooling
+  directUrl = env("KINDRED_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+  id             String         @id @default(cuid())
+  name           String?        @db.VarChar(256)
+  email          String?        @unique
+  phoneNumber    String         @unique @db.VarChar(15)
+  role           Role           @default(MEMBER)
+  createdAt      DateTime       @default(now()) @map(name: "created_at")
+  updatedAt      DateTime       @updatedAt @map(name: "updated_at")
+  profilePicture String?        @default("https://utfs.io/f/2bb9f82e-e78c-48d0-94d7-32f0d6ae6ace-n9m19n.png")
+  status         MemberStatus?  @default(PENDING)
+  circles        CircleToUser[]
+  createdCircles Circle[]       @relation("CreatedCircles")
+
+  @@unique([phoneNumber, email])
+  @@index([email, name])
+}
+
+model Circle {
+  id                 String         @id @default(cuid())
+  name               String         @db.VarChar(256)
+  description        String?
+  createdAt          DateTime       @default(now()) @map(name: "created_at")
+  updatedAt          DateTime       @updatedAt @map(name: "updated_at")
+  agreeToTerms       Boolean        @default(false)
+  payPeriod          PayPeriod
+  currency           String
+  contributionAmount Decimal        @db.Decimal(10, 2)
+  inflationMode      Boolean
+  vaultOption        Int
+  yieldPercentage    Float
+  creator            User           @relation("CreatedCircles", fields: [creatorId], references: [id])
+  creatorId          String
+  members            CircleToUser[]
+}
+
+model CircleToUser {
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+  circleId String
+  circle   Circle @relation(fields: [circleId], references: [id])
+
+  @@id([userId, circleId])
+}
+
+enum PayPeriod {
+  LUDICROUS
+  MONTHLY
+  WEEKLY
+  BIWEEKLY
+}
+
+enum MemberStatus {
+  PENDING
+  GOOD
+  BLACKLISTED
+  LATE
+}
+
+enum Role {
+  ADMIN
+  MEMBER
 }

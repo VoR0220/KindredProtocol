@@ -15,12 +15,21 @@ import {
 import { CreateCircleStepProps } from "@/components/create-circle/create-circle";
 
 const CreateCircle3: React.FC<CreateCircleStepProps> = ({ circleData, handleChangeInput }) => {
+  // State is specifically typed to allow number or null
+  const [contributionValue, setContributionValueValue] = useState<number | null>(null);
+
   const handleContributionAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const amount = Number(e.target.value);
-    handleChangeInput?.({
-      name: 'contributionAmount',
-      value: amount,
-    });
+    const newValue = e.target.value;
+    if (newValue === '') {
+      setContributionValueValue(null);
+    } else {
+      const parsedValue = parseFloat(newValue);
+      setContributionValueValue(parsedValue);
+      handleChangeInput?.({
+        name: 'contributionAmount',
+        value: parsedValue,
+      });
+    }
   };
 
   const handleCurrencyChange = (selectedCurrency: string) => {
@@ -56,7 +65,7 @@ const CreateCircle3: React.FC<CreateCircleStepProps> = ({ circleData, handleChan
                 className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 placeholder="0.00"
                 onChange={handleContributionAmountChange}
-                value={circleData.contributionAmount}
+                value={contributionValue === null ? '' : contributionValue}
               />
               <div className="absolute inset-y-0 right-0 flex items-center">
                 <Label htmlFor="currency" className="sr-only">

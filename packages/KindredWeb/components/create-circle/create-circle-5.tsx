@@ -11,14 +11,14 @@ import isMobilePhone from 'validator/lib/isMobilePhone';
 
 const CreateCircle5: React.FC<CreateCircleStepProps> = ({ circleData, handleChangeInput }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [phoneNumbers, setPhoneNumbers] = useState<string[]>(circleData.members);
+  const [phoneNumbers, setPhoneNumbers] = useState<string[]>(circleData.invited || []);
   const [error, setError] = useState('');
 
   const handleAddPhoneNumber = () => {
     if (isValidPhoneNumber(phoneNumber)) {
       setPhoneNumbers(prevNumbers => [...prevNumbers, phoneNumber]);
       handleChangeInput?.({
-          name: 'members',
+          name: 'invited',
           value: [...phoneNumbers, phoneNumber],
       });
       setPhoneNumber('');
@@ -32,7 +32,7 @@ const CreateCircle5: React.FC<CreateCircleStepProps> = ({ circleData, handleChan
     const newPhoneNumbers = phoneNumbers.filter((_, index) => index !== indexToRemove);
     setPhoneNumbers(newPhoneNumbers);
     handleChangeInput?.({
-        name: 'members',
+        name: 'invited',
         value: newPhoneNumbers,
     });
   };
@@ -48,9 +48,9 @@ const CreateCircle5: React.FC<CreateCircleStepProps> = ({ circleData, handleChan
         <div className="mt-4 w-96 flex flex-col">
           <div>
             <h1 className='text-2xl font-bold mb-1'>
-              Add Members
+              Invite members
             </h1>
-            <p>Add members to your circle by their phone number.</p>
+            <p>Invite members to your circle by their phone number.</p>
             <div className="flex w-full max-w-sm items-center space-x-2 mt-4">
               <Input 
                 type="text"

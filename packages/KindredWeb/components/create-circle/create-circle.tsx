@@ -43,6 +43,9 @@ const initialCircleData = {
   members: [],
 }
 
+// compound address mumbai
+const compoundAddress = "0xF09F0369aB0a875254fB565E52226c88f10Bc839";
+
 export interface InputChange {
   name: string;
   value: string | number | boolean | string[];

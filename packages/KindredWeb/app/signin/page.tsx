@@ -147,7 +147,7 @@ export default function SignIn() {
                 console.log(pkpWallet);
 
                 // *******************
-                // router.push("/dashboard");
+                router.push("/dashboard");
                 // *******************
         
               } catch(error) {

@@ -16,6 +16,7 @@ import { AuthCallbackParams } from "@lit-protocol/types";
 import { PKPEthersWallet } from "@lit-protocol/pkp-ethers";
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { ethers } from "ethers";
+import { createSafe } from "../services/safe/safe-aa";
 interface IStytchResponse {
     phone_id: string;
     request_id: string;
@@ -139,7 +140,7 @@ export default function SignIn() {
 
                 const pkpWallet = new PKPEthersWallet({
                   pkpPubKey: pkps[pkps.length - 1].publicKey,
-                  rpc: "https://1rpc.io/gnosis", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis
+                  rpc: "https://polygon-mumbai-bor.publicnode.com", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis // https://polygon-mumbai-bor.publicnode.com
                   controllerSessionSigs: sessionSigs
                 });
                 
@@ -148,17 +149,18 @@ export default function SignIn() {
                 console.log(pkpWallet);
 
                 // *******************
-                // const SIMPLE_ACCOUNT_FACTORY_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-                // const initCode = ethers.utils.hexConcat([
-                //   SIMPLE_ACCOUNT_FACTORY_ADDRESS,
-                //   simpleAccountFactory.interface.encodeFunctionData("createAccount", [pkpWallet.address, 0]),
-                // ])   
                 
                 console.log(pkpWallet.address);
 
                 const signResult = await pkpWallet.signMessage("Welcome to Kindred!");
 
                 console.log(signResult);
+
+                const createSafeResult = await createSafe(pkpWallet);
+
+                console.log(createSafeResult);
+
+
 
                 // *******************
                 router.push("/dashboard");

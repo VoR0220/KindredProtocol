@@ -17,6 +17,7 @@ import { PKPEthersWallet } from "@lit-protocol/pkp-ethers";
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { ethers } from "ethers";
 import { createSafe } from "../services/safe/safe-aa";
+import { generatePrivateKey } from 'viem/accounts';
 interface IStytchResponse {
     phone_id: string;
     request_id: string;
@@ -109,68 +110,78 @@ export default function SignIn() {
                 const sessionKeyPair = litNodeClient.getSessionKey();
                 
                 console.log(sessionKeyPair);
+                let wallet: PKPEthersWallet | ethers.Wallet;
 
-                const authNeededCallback = async (params: AuthCallbackParams) => {
-                    const response = await litNodeClient.signSessionKey({
-                        sessionKey: sessionKeyPair,
-                        statement: params.statement,
-                        authMethods: [authMethod],
-                        pkpPublicKey: pkps[pkps.length - 1].publicKey,
-                        expiration: params.expiration,
-                        resources: params.resources,
-                        chainId: 1,
-                    });
-                    return response.authSig;
-                };
+                try { // needed because the lit protocol being sketch rn
+                  const authNeededCallback = async (params: AuthCallbackParams) => {
+                      const response = await litNodeClient.signSessionKey({
+                          sessionKey: sessionKeyPair,
+                          statement: params.statement,
+                          authMethods: [authMethod],
+                          pkpPublicKey: pkps[pkps.length - 1].publicKey,
+                          expiration: params.expiration,
+                          resources: params.resources,
+                          chainId: 1,
+                      });
+                      return response.authSig;
+                  };
+                  
+                  const sessionSigs = await litNodeClient.getSessionSigs({
+                      chain: "ethereum",
+                      expiration: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(),
+                      resourceAbilityRequests: resourceAbilities,
+                      sessionKey: sessionKeyPair,
+                      authNeededCallback	
+                  }).catch((err: any) => {
+                      console.log("error while attempting to access session signatures: ", err)
+                      throw err;
+                  });
+
+                  console.log(sessionSigs);
+
+                  // *******************
+
                 
-                const sessionSigs = await litNodeClient.getSessionSigs({
-                    chain: "ethereum",
-                    expiration: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(),
-                    resourceAbilityRequests: resourceAbilities,
-                    sessionKey: sessionKeyPair,
-                    authNeededCallback	
-                }).catch((err: any) => {
-                    console.log("error while attempting to access session signatures: ", err)
-                    throw err;
-                });
+                  wallet = new PKPEthersWallet({
+                    pkpPubKey: pkps[pkps.length - 1].publicKey,
+                    rpc: "https://polygon-mumbai-bor.publicnode.com", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis // https://polygon-mumbai-bor.publicnode.com
+                    controllerSessionSigs: sessionSigs
+                  });
+                  
+                  await wallet.init();
 
-                console.log(sessionSigs);
+                  console.log(wallet);
 
-                // *******************
+                  // *******************
+                  
+                  console.log(wallet.address);
 
-                const pkpWallet = new PKPEthersWallet({
-                  pkpPubKey: pkps[pkps.length - 1].publicKey,
-                  rpc: "https://polygon-mumbai-bor.publicnode.com", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis // https://polygon-mumbai-bor.publicnode.com
-                  controllerSessionSigs: sessionSigs
-                });
-                
-                await pkpWallet.init();
+                  const signResult = await wallet.signMessage("Welcome to Kindred!");
+                  console.log(signResult);
+              } catch (err: any) {
+                console.error('error: ', err)
+                console.log("Creating new wallet from random priv key!")
+                wallet = ethers.Wallet.createRandom().connect(ethers.getDefaultProvider(process.env.RPC_PROVIDER_URL!)) // generate a fresh wallet
+                console.log("wallet: ", wallet.address)
+              }                
 
-                console.log(pkpWallet);
+              console.log("trying to create a safe")
 
-                // *******************
-                
-                console.log(pkpWallet.address);
+              const createSafeResult = await createSafe(wallet);
 
-                const signResult = await pkpWallet.signMessage("Welcome to Kindred!");
-
-                console.log(signResult);
-
-                const createSafeResult = await createSafe(pkpWallet);
-
-                console.log(createSafeResult);
+              console.log("get address: ", await createSafeResult.getSafeAddress());
 
 
 
-                // *******************
-                router.push("/dashboard");
-                // *******************
+              // *******************
+              router.push("/dashboard");
+              // *******************
         
-              } catch(error) {
-                console.log(error);
-                setIsError(true);
-                resetPasscode();
-              }
+            } catch(error) {
+              console.log(error);
+              setIsError(true);
+              resetPasscode();
+            }
         }
     };
 

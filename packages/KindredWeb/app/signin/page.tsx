@@ -11,7 +11,10 @@ import { ProviderType } from "@lit-protocol/constants";
 import { LitAuthClient } from "@lit-protocol/lit-auth-client";
 import { useRouter } from 'next/navigation';
 import Image from "next/image";
-
+import { LitAbility, LitActionResource } from "@lit-protocol/auth-helpers";
+import { AuthCallbackParams } from "@lit-protocol/types";
+import { PKPEthersWallet } from "@lit-protocol/pkp-ethers";
+import * as LitJsSdk from "@lit-protocol/lit-node-client";
 interface IStytchResponse {
     phone_id: string;
     request_id: string;
@@ -83,7 +86,68 @@ export default function SignIn() {
 
                 console.log(pkps);
 
-                router.push("/dashboard");
+                // *******************
+              
+                const litNodeClient = new LitJsSdk.LitNodeClient({
+                  litNetwork: "cayenne",
+                  debug: false
+                });
+              
+                await litNodeClient.connect();
+
+                console.log(litNodeClient);
+                
+                const resourceAbilities = [
+                    {
+                        resource: new LitActionResource("*"),
+                        ability: LitAbility.PKPSigning,
+                    },
+                ];
+                
+                const sessionKeyPair = litNodeClient.getSessionKey();
+                
+                console.log(sessionKeyPair);
+
+                const authNeededCallback = async (params: AuthCallbackParams) => {
+                    const response = await litNodeClient.signSessionKey({
+                        sessionKey: sessionKeyPair,
+                        statement: params.statement,
+                        authMethods: [authMethod],
+                        pkpPublicKey: pkps[pkps.length - 1].publicKey,
+                        expiration: params.expiration,
+                        resources: params.resources,
+                        chainId: 1,
+                    });
+                    return response.authSig;
+                };
+                
+                const sessionSigs = await litNodeClient.getSessionSigs({
+                    chain: "ethereum",
+                    expiration: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toISOString(),
+                    resourceAbilityRequests: resourceAbilities,
+                    sessionKey: sessionKeyPair,
+                    authNeededCallback	
+                }).catch((err: any) => {
+                    console.log("error while attempting to access session signatures: ", err)
+                    throw err;
+                });
+
+                console.log(sessionSigs);
+
+                // *******************
+
+                const pkpWallet = new PKPEthersWallet({
+                  pkpPubKey: pkps[pkps.length - 1].publicKey,
+                  rpc: "https://1rpc.io/gnosis", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis
+                  controllerSessionSigs: sessionSigs
+                });
+                
+                await pkpWallet.init();
+
+                console.log(pkpWallet);
+
+                // *******************
+                // router.push("/dashboard");
                 // *******************
         
               } catch(error) {

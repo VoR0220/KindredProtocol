@@ -138,7 +138,7 @@ export default function SignIn() {
 
                 const pkpWallet = new PKPEthersWallet({
                   pkpPubKey: pkps[pkps.length - 1].publicKey,
-                  rpc: "https://rpc.ankr.com/eth_goerli", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis
+                  rpc: "https://1rpc.io/gnosis", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis
                   controllerSessionSigs: sessionSigs
                 });
                 

@@ -30,9 +30,11 @@ interface ISessionStatus {
 
 export default function SignIn() {
 
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [isDisabled, setIsDisabled] = useState(true);
-    const [isError, setIsError] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [isDisabled, setIsDisabled] = useState(true);
+  const [isError, setIsError] = useState(false);
+  const [existPhoneNumber, setExistPhoneNumber] = useState(false);
+   
 
     let stytchResponse: IStytchResponse = new Object() as IStytchResponse;
     const [stytchResponseState, setStytchResponseState] = useState(stytchResponse);
@@ -78,6 +80,7 @@ export default function SignIn() {
 
                 console.log(pkps);
 
+                window.location.href = "/dashboard"
                 // *******************
         
               } catch(error) {
@@ -94,6 +97,7 @@ export default function SignIn() {
             stytchResponse = response.data.stytchResponse;
             setStytchResponseState(stytchResponse);
             console.log(stytchResponse);
+            setExistPhoneNumber(true);
         }
     };
 
@@ -167,7 +171,7 @@ export default function SignIn() {
           inputs.push(
             <input
               autoFocus={i === 0}
-              className="OTPInput"
+              className="OTPInput text-black"
               id={`digit-${i}`}
               key={i}
               maxLength={1}
@@ -186,11 +190,21 @@ export default function SignIn() {
 
   return (
     <>
-    <Container>
+    { (!existPhoneNumber) &&
+    
+    (<Container>
         <div className=" min-h-screen flex items-center justify-center mt-[150px]">
             <div className="rounded-lg shadow-lg bg-white p-6 space-y-6 border border-gray-200 dark:border-gray-700">
                 <div className="space-y-2 text-center">
-                    <h1 className="text-3xl font-bold text-black">Kindred</h1>
+                    {/* <h1 className="text-3xl font-bold text-black">Kindred</h1> */}
+                  <div className="my-8 h-[70px] items-center justify-center">
+                  <img
+                        src="https://bafybeifix2isnviipo2vnmtornurxnju7rlt3wsdemut5usswwcyulojjq.ipfs.w3s.link/logo-full%4030x.jpg"
+                        alt="logo"
+                        height={150} width={250}
+                        className="img-wrapper aspect-auto object-cover rounded-lg transition-all duration-300 hover:scale-105"
+                      />
+                  </div>
                     <p className="text-zinc-500 dark:text-zinc-400">
                         Enter your phone below to login to your Kindred account
                     </p>
@@ -208,33 +222,36 @@ export default function SignIn() {
                 </div>
             </div>
         </div>
-    </Container>
-    <br />
+    </Container>)
+    
+    }
+    {( existPhoneNumber) && (
     <Container>
-        <div className=" min-h-screen flex items-center justify-center mt-[150px]">
-            <div className="rounded-lg shadow-lg bg-white p-6 space-y-6 border border-gray-200 dark:border-gray-700">
-                <Label className="text-black">Enter passcode</Label>
-                <br />
-                <Label className="text-black">
-                    A 6-digit passcode was sent to you at <strong>{phoneNumber}</strong>.
-                </Label>
-                <div>
-                    <p style={styles.error}>{isError ? 'Invalid code. Please try again.' : ''}</p>
-                    <div style={styles.passcodeInputContainer}>{renderPasscodeInputs()}</div>
-                    <Button className="w-full" variant="link" onClick={() => resendCode()}>
-                        <div className="flex items-center justify-center">
-                        Resend code
-                        </div>
-                    </Button>
-                    <Button className="w-full bg-[#4285F4] text-white mt-4" variant="outline" onClick={() => processOTP()}>
-                        <div className="flex items-center justify-center">
-                        Continue
-                        </div>
-                    </Button>
-                </div>
-            </div>
-        </div>
+      <div className=" min-h-screen flex items-center justify-center mt-[150px]">
+          <div className="rounded-lg shadow-lg bg-white p-6 space-y-6 border border-gray-200 dark:border-gray-700">
+              <Label className="text-black">Enter passcode</Label>
+              <br />
+              <Label className="text-black">
+                  A 6-digit passcode was sent to you at <strong>{phoneNumber}</strong>.
+              </Label>
+              <div>
+                  <p style={styles.error}>{isError ? 'Invalid code. Please try again.' : ''}</p>
+                  <div style={styles.passcodeInputContainer}>{renderPasscodeInputs()}</div>
+                  <Button className="w-full" variant="link" onClick={() => resendCode()}>
+                      <div className="flex items-center justify-center">
+                      Resend code
+                      </div>
+                  </Button>
+                  <Button className="w-full bg-[#4285F4] text-white mt-4" variant="outline" onClick={() => processOTP()}>
+                      <div className="flex items-center justify-center">
+                      Continue
+                      </div>
+                  </Button>
+              </div>
+          </div>
+      </div>
     </Container>
+    )}
     </>
       )
 }

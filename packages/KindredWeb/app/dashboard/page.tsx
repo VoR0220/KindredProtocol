@@ -2,7 +2,6 @@ import SectionHeader from "@/components/section-header"
 import CirclesList from "@/components/circles/circles-list"
 import ActivityList from "@/components/circles/activity-list"
 import Container from "@/components/ui/container"
-import Navbar from "@/components/navbar"
 
 export default function Dashboard() {
   return (

@@ -9,6 +9,7 @@ import { useState } from "react";
 import axios from 'axios';
 import { ProviderType } from "@lit-protocol/constants";
 import { LitAuthClient } from "@lit-protocol/lit-auth-client";
+import { useRouter } from 'next/navigation';
 
 interface IStytchResponse {
     phone_id: string;
@@ -30,6 +31,7 @@ interface ISessionStatus {
 
 export default function SignIn() {
 
+  const router = useRouter();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isDisabled, setIsDisabled] = useState(true);
   const [isError, setIsError] = useState(false);
@@ -80,7 +82,7 @@ export default function SignIn() {
 
                 console.log(pkps);
 
-                window.location.href = "/dashboard"
+                router.push("/dashboard");
                 // *******************
         
               } catch(error) {

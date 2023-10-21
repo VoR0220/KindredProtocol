@@ -10,6 +10,7 @@ import axios from 'axios';
 import { ProviderType } from "@lit-protocol/constants";
 import { LitAuthClient } from "@lit-protocol/lit-auth-client";
 import { useRouter } from 'next/navigation';
+import Image from "next/image";
 
 interface IStytchResponse {
     phone_id: string;
@@ -194,37 +195,41 @@ export default function SignIn() {
     <>
     { (!existPhoneNumber) &&
     
-    (<Container>
-        <div className=" min-h-screen flex items-center justify-center mt-[150px]">
+    (
+      <section className="w-full max-w-sm bg-gray-100 h-screen">
+        <Container>
+          <div className=" min-h-screen flex items-center justify-center mt-[150px]">
             <div className="rounded-lg shadow-lg bg-white p-6 space-y-6 border border-gray-200 dark:border-gray-700">
                 <div className="space-y-2 text-center">
                     {/* <h1 className="text-3xl font-bold text-black">Kindred</h1> */}
                   <div className="my-8 h-[70px] items-center justify-center">
-                  <img
-                        src="https://bafybeifix2isnviipo2vnmtornurxnju7rlt3wsdemut5usswwcyulojjq.ipfs.w3s.link/logo-full%4030x.jpg"
-                        alt="logo"
-                        height={150} width={250}
-                        className="img-wrapper aspect-auto object-cover rounded-lg transition-all duration-300 hover:scale-105"
-                      />
+                  <Image
+                    src="https://bafybeifix2isnviipo2vnmtornurxnju7rlt3wsdemut5usswwcyulojjq.ipfs.w3s.link/logo-full%4030x.jpg"
+                    alt="logo"
+                    height={150} width={250}
+                    className="img-wrapper aspect-auto object-cover rounded-lg transition-all duration-300 hover:scale-105"
+                  />
                   </div>
                     <p className="text-zinc-500 dark:text-zinc-400">
-                        Enter your phone below to login to your Kindred account
+                      Enter your phone below to login to your Kindred account
                     </p>
                 </div>
                 <div className="space-y-4">
-                    <div className="space-y-2">
-                        <Label htmlFor="email">Telephone</Label>
-                        <Input id="email" placeholder="Telephone Number" required type="email" onChange={(e) => setPhoneNumber(e.target.value)} />
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Telephone</Label>
+                    <Input id="email" placeholder="Telephone Number" required type="email" onChange={(e) => setPhoneNumber(e.target.value)} />
+                  </div>
+                  <Button className="w-full text-white" variant="default" onClick={() => processSignIn()}>
+                    <div className="flex items-center justify-center">
+                      Login
                     </div>
-                    <Button className="w-full bg-[#4285F4] text-white" variant="outline" onClick={() => processSignIn()}>
-                        <div className="flex items-center justify-center">
-                        Login
-                        </div>
-                    </Button>
+                  </Button>
                 </div>
             </div>
-        </div>
-    </Container>)
+          </div>
+        </Container>
+      </section>
+    )
     
     }
     {( existPhoneNumber) && (

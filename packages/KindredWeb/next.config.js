@@ -16,7 +16,7 @@ const nextConfig = {
 			},
 			{
 				protocol: 'https',
-				hostname: 'bafybeifrbeic5jy2vsfke2fsrfacec7abyullnne5crl6buoellb2flgvm.ipfs.w3s.link',
+				hostname: '**.ipfs.w3s.link',
 				port: '',
 				pathname: '/**',
 			}

@@ -3,12 +3,17 @@
 import { useEffect } from 'react';
 import { ThemeButton } from "@/components/theme-button"
 import Container from "@/components/ui/container"
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
 
+  const router = useRouter();
+
+  console.log("router", router);
+  
   useEffect(() => {
     setTimeout(() => {
-      window.location.href = "/signin"
+      router.push("/signin");
     }, 3000); // 3000ms delay (3 seconds)
   });
 

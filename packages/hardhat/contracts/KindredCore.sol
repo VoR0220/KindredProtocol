@@ -3,7 +3,8 @@ pragma solidity ^0.8.20;
 
 import "lib/openzeppelin-contracts/contracts/utils/cryptography/ECDSA.sol";
 import "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import "lib/openzeppelin-contracts/contracts/interfaces/IERC4626.sol";
+//import "lib/openzeppelin-contracts/contracts/interfaces/IERC4626.sol"; // will add this in later, for now compound
+import "./IComet.sol";
 
 
 // notes
@@ -28,10 +29,9 @@ contract KindredCore {
 		uint256 shares;
 		uint8 currentDueDate;
 		PoolStage stage;
-		IERC4626 vault;
+		//IERC4626 vault;
+		CometMainInterface vault;
 		IERC20 token;
-		address currentRecipient;
-		bool inflationModeEnabled;
 	}
 
 	struct UserInfo {
@@ -50,7 +50,7 @@ contract KindredCore {
 	event PaymentMade(address indexed user, uint indexed amount, uint indexed poolId);
 	event LoanTaken(address indexed user, uint indexed amount);
 	event BlackListed(address indexed blacklistee);
-	event FinalYieldDistribution(address[] participants, uint[] shares, uint totalEarned);
+	event FinalYieldDistribution(address[] participants, uint[] shares); /*, uint totalEarned);*/
 
 	function getPoolsParticipatingIn(address user) external view returns (uint256[] memory) {
 		uint256[] memory poolIds = poolsParticipatingIn[user];
@@ -82,7 +82,7 @@ contract KindredCore {
 		require(poolToRegister.shares == 0, "shares should be 0");
 		require(poolToRegister.currentPot == 0, "no funds in yet");
 		require(poolToRegister.currentDueDate == 0, "current due date needs to be set to 0");
-	
+		require(poolToRegister.expectedTermPot == poolToRegister.payAmount * poolToRegister.participants.length, "invalid expected term pot");
 		++_poolCounter;
 
 		uint counter = _poolCounter;
@@ -136,8 +136,10 @@ contract KindredCore {
 		madePaymentsForDueDate[msg.sender][poolId][pool.dueDates[pool.currentDueDate]] = true;
 		bool success = pool.token.transferFrom(msg.sender, address(this), uint256(pool.payAmount));
 		require(success, "transfer didn't work");
-		uint shares = pool.vault.deposit(payAmount, address(this));
-		pool.shares += shares;
+		//uint shares = pool.vault.deposit(payAmount, address(this));
+		//pool.shares += shares;
+		// changing from 4626 to hardcode comet implementation
+		pool.vault.supplyFrom(msg.sender, address(this), address(pool.token), payAmount);
 		emit PaymentMade(msg.sender, payAmount, poolId);
 	}
 
@@ -155,9 +157,11 @@ contract KindredCore {
 		}
 
 		pool.currentPot -= pool.expectedTermPot;
-		uint shares = pool.vault.withdraw(pool.currentPot, msg.sender, address(this));
-		pool.shares -= shares;
-		require(pool.token.transferFrom(address(this), msg.sender, uint256(pool.expectedTermPot)));
+		//uint shares = pool.vault.withdraw(pool.currentPot, msg.sender, address(this));
+		//pool.shares -= shares;
+		// 4626 implementation commented out, using comet for now
+		pool.vault.withdrawFrom(address(this), msg.sender, address(pool.token), pool.currentPot);
+		//require(pool.token.transferFrom(address(this), msg.sender, uint256(pool.expectedTermPot)));
 		emit LoanTaken(msg.sender, pool.expectedTermPot);
 	}
 
@@ -188,6 +192,8 @@ contract KindredCore {
 		emit BlackListed(_user);
 	}
 
+	// todo: This needs to be improved and automated via algorithm
+	// for now doing it manually
 	function distributeYield(uint poolId, uint[] memory sharesDistribution) external {
 		PoolInfo memory pool = pools[poolId];
 		require(pool.stage == PoolStage.Finalized, "not finished yet");
@@ -203,15 +209,18 @@ contract KindredCore {
 			filterPartipicants[i] = participants[i];
 		}
 		require(filterPartipicants.length == sharesDistribution.length, "unequal share to participant length");
-		IERC4626 vault = pool.vault;
-		uint totalEarned = vault.previewRedeem(shares);
+		CometMainInterface vault = pool.vault;
+		//uint totalEarned = vault.previewRedeem(shares);
 		uint sharesCounter;
 		for (uint i; i < filterPartipicants.length; ++i) {
-			uint usersShare = shares * sharesDistribution[i] / 100;
-			vault.redeem(usersShare, filterPartipicants[i], address(this));
-			sharesCounter += sharesDistribution[i];
+			//uint usersShare = shares * sharesDistribution[i] / 100;
+			//vault.redeem(usersShare, filterPartipicants[i], address(this));
+			//sharesCounter += sharesDistribution[i];
+			// this cannot go into production, it's possible that it could drain the contract
+			vault.withdrawFrom(address(this), filterPartipicants[i], address(pool.token), sharesDistribution[i]);
 		}
-		require(sharesCounter == 100, "uneven shares");
-		emit FinalYieldDistribution(filterPartipicants, sharesDistribution, totalEarned);
+		//require(sharesCounter <= )
+		//require(sharesCounter == 100, "uneven shares");
+		emit FinalYieldDistribution(filterPartipicants, sharesDistribution/*, totalEarned*/);
 	}	
 }

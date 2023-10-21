@@ -7,7 +7,8 @@ import {AuthCallbackParams} from '@lit-protocol/types'
 import {LitActionResource, LitAbility } from '@lit-protocol/auth-helpers'
 import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import ethers from 'ethers';
-
+const publicKeyToAddress = require('ethereum-public-key-to-address')
+import Safe, { SafeAccountConfig, PredictedSafeProps, EthersAdapter, SafeDeploymentConfig } from '@safe-global/protocol-kit'
 
 async function claimKeysForGroup(phoneNumbers: string[]) {
 	const client = new stytch.Client({
@@ -22,17 +23,44 @@ async function claimKeysForGroup(phoneNumbers: string[]) {
 
 	await lit.connect();
 
-	const addresses = []
+	const pubKeys = []
 	for (const phoneNumber of phoneNumbers) {
 		const stytchResponse = await client.otps.whatsapp.loginOrCreate({
 			phone_number: phoneNumber,
 		})
-		stytchResponse.user_id
+
 		const keyId = lit.computeHDKeyId(stytchResponse.user_id, process.env.LIT_PROTOCOL_API_KEY!)
-		const publicKey = lit.computeHDPubKey(keyId)
-		addresses.push(ethers.utils.computeAddress(publicKey)) // this should work
+		console.log("Key Id: ", keyId.substring(2))
+		const publicKey = lit.computeHDPubKey(keyId.substring(2))
+		console.log("Public key: ", publicKey)
+
+		pubKeys.push(publicKey)
 	}
 
+	const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_PROVIDER_URL!);
+	const addresses: string[] = []
+	for (const pubKey of pubKeys) {
+		const addr = publicKeyToAddress(pubKey)
+		const voidSigner = new ethers.VoidSigner(addr)
+		const voidSignerConnected = voidSigner.connect(provider)
+		const safeAccountConfig: SafeAccountConfig = {
+			owners: [addr],
+			threshold: 1
+		}
+		const safeDeploymentConfig: SafeDeploymentConfig = {
+			saltNonce: "1"
+		}
+		const predictedSafe: PredictedSafeProps = {
+			safeAccountConfig,
+			safeDeploymentConfig
+		}
+		const ethAdapter = new EthersAdapter({
+			ethers,
+			signerOrProvider: voidSignerConnected
+		})
+		const safeSdk: Safe = await Safe.create({ethAdapter, predictedSafe})
+		addresses.push(await safeSdk.getAddress())
+	}
 	return addresses
 }
 
@@ -123,7 +151,7 @@ async function authenticateAndGetKey(otpCode: string, stytchResp: OTPsWhatsappLo
 
 	const pkpWallet = new PKPEthersWallet({
 		pkpPubKey: pkps[pkps.length - 1].publicKey,
-		rpc: "<standard RPC URL for the chain you are using>", // e.g. https://rpc.ankr.com/eth_goerli
+		rpc: process.env.RPC_PROVIDER_URL!, // e.g. https://rpc.ankr.com/eth_goerli
 		controllerSessionSigs: sessionSigs
 	});
 	

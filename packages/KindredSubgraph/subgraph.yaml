@@ -1,0 +1,36 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: KindredCore
+    network: mumbai
+    source:
+      address: "0xC25BE53059B3793748f6935280ac99224bC7c4Df"
+      abi: KindredCore
+      startBlock: 41447757
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - BlackListed
+        - FinalYieldDistribution
+        - LoanTaken
+        - PaymentMade
+        - PoolRegistered
+      abis:
+        - name: KindredCore
+          file: ./abis/KindredCore.json
+      eventHandlers:
+        - event: BlackListed(indexed address)
+          handler: handleBlackListed
+        - event: FinalYieldDistribution(address[],uint256[])
+          handler: handleFinalYieldDistribution
+        - event: LoanTaken(indexed address,indexed uint256)
+          handler: handleLoanTaken
+        - event: PaymentMade(indexed address,indexed uint256,indexed uint256)
+          handler: handlePaymentMade
+        - event: PoolRegistered(indexed uint256,indexed uint256,address[],uint256[])
+          handler: handlePoolRegistered
+      file: ./src/kindred-core.ts

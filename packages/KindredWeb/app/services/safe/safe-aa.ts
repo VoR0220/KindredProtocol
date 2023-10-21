@@ -10,23 +10,32 @@ import {
 import { ethers, Signer } from 'ethers'
 import { PKPEthersWallet } from '@lit-protocol/pkp-ethers'
 
-const config = {
-  SAFE_SIGNER_PRIVATE_KEY: '<SAFE_SIGNER_PRIVATE_KEY>',
-  RPC_URL: process.env.RPC_PROVIDER_URL!,
-  RELAY_API_KEY: process.env.GELATO_RELAY_API_KEY!
+export async function createSafe(key: PKPEthersWallet): Promise<AccountAbstraction> {
+	const relayPack = new GelatoRelayPack(process.env.GELATO_RELAY_API_KEY!)
+	const safeAccountAbstraction = new AccountAbstraction(key)
+  	const sdkConfig: AccountAbstractionConfig = {
+    	relayPack
+ 	}
+  	await safeAccountAbstraction.init(sdkConfig)
+	// to call address use safeAccountAbstraction.getSafeAddress()
+	return safeAccountAbstraction
 }
 
-const mockOnRampConfig = {
-  ADDRESS: '<ADDRESS>',
-  PRIVATE_KEY: '<PRIVATE_KEY>'
+// run this after a contract.populateTransaction.<methodName(args)>
+export function convertToSafeTx(tx: ethers.UnsignedTransaction): MetaTransactionData {
+	const convertedToMetaTx: MetaTransactionData = {
+		to: tx.to!,
+		data: tx.data! as string,
+		value: tx.value as string,
+		operation: OperationType.Call
+	}
+	return convertedToMetaTx
 }
 
-const txConfig = {
-  TO: '<TO>',
-  DATA: '<DATA>',
-  VALUE: '<VALUE>'
-}
-
-export async function createSafe(key: PKPEthersWallet) {
-
+export async function transactSafe(account: AccountAbstraction, txs: MetaTransactionData[]): Promise<string> {
+	const sponsored: MetaTransactionOptions = {
+		isSponsored: true
+	}
+	const id = await account.relayTransaction(txs, sponsored)
+	return id
 }

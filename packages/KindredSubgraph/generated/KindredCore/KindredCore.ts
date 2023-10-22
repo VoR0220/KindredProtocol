@@ -70,6 +70,10 @@ export class LoanTaken__Params {
   get amount(): BigInt {
     return this._event.parameters[1].value.toBigInt();
   }
+
+  get poolId(): BigInt {
+    return this._event.parameters[2].value.toBigInt();
+  }
 }
 
 export class PaymentMade extends ethereum.Event {

@@ -48,7 +48,7 @@ contract KindredCore {
 
 	event PoolRegistered(uint indexed poolId, uint indexed payAmount, address[] users, uint[] dueDates);
 	event PaymentMade(address indexed user, uint indexed amount, uint indexed poolId);
-	event LoanTaken(address indexed user, uint indexed amount);
+	event LoanTaken(address indexed user, uint indexed amount, uint indexed poolId);
 	event BlackListed(address indexed blacklistee);
 	event FinalYieldDistribution(address[] participants, uint[] shares); /*, uint totalEarned);*/
 
@@ -162,7 +162,7 @@ contract KindredCore {
 		// 4626 implementation commented out, using comet for now
 		pool.vault.withdrawFrom(address(this), msg.sender, address(pool.token), pool.currentPot);
 		//require(pool.token.transferFrom(address(this), msg.sender, uint256(pool.expectedTermPot)));
-		emit LoanTaken(msg.sender, pool.expectedTermPot);
+		emit LoanTaken(msg.sender, pool.expectedTermPot, poolId);
 	}
 
 	function addToBlacklist(uint poolId, address _user, bool _recalibrateLoan) external {

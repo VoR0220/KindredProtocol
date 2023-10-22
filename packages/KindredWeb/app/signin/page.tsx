@@ -18,6 +18,9 @@ import * as LitJsSdk from "@lit-protocol/lit-node-client";
 import { ethers } from "ethers";
 import { createSafe } from "../services/safe/safe-aa";
 import { generatePrivateKey } from 'viem/accounts';
+import {convertEthersSignerToAccountSigner, ZeroDevEthersProvider} from '@zerodev/sdk'
+
+
 interface IStytchResponse {
     phone_id: string;
     request_id: string;
@@ -93,7 +96,7 @@ export default function SignIn() {
               
                 const litNodeClient = new LitJsSdk.LitNodeClient({
                   litNetwork: "cayenne",
-                  alertWhenUnauthorized: false,
+                  alertWhenUnauthorized: true,
                   debug: true,
                 });
               
@@ -111,7 +114,7 @@ export default function SignIn() {
                 const sessionKeyPair = litNodeClient.getSessionKey();
                 
                 console.log(sessionKeyPair);
-                let wallet: PKPEthersWallet | ethers.Wallet;
+                let wallet: PKPEthersWallet | ethers.Signer;
 
                 try { // needed because the lit protocol being sketch rn
                   const authNeededCallback = async (params: AuthCallbackParams) => {
@@ -145,20 +148,22 @@ export default function SignIn() {
                 
                   wallet = new PKPEthersWallet({
                     pkpPubKey: pkps[pkps.length - 1].publicKey,
-                    rpc: "https://rpc-mumbai.maticvigil.com", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis // https://polygon-mumbai-bor.publicnode.com
+                    rpc: process.env.PROVIDER_RPC_URL!, // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis // https://polygon-mumbai-bor.publicnode.com
                     controllerSessionSigs: sessionSigs
                   });
                   
-                  await wallet.init();
+                  await (wallet as PKPEthersWallet).init();
 
                   console.log(wallet);
 
                   // *******************
                   
-                  console.log(wallet.address);
-
+                  console.log((wallet as PKPEthersWallet).address);
+                  console.log("WE GOT PAST PKP WALLET")
                   const signResult = await wallet.signMessage("Welcome to Kindred!");
                   console.log(signResult);
+                  console.log("PAST SIGN RESULT ONTO ZD")
+
 
                   //const provider = new ethers.providers.JsonRpcProvider("https://rpc-mumbai.maticvigil.com");
                   //await wallet.setRpc("https://rpc-mumbai.maticvigil.com");
@@ -167,22 +172,21 @@ export default function SignIn() {
 
               } catch (err: any) {
                 console.error('error: ', err)
-                console.log("Creating new wallet from random priv key!")
-                wallet = ethers.Wallet.createRandom().connect(ethers.getDefaultProvider(process.env.RPC_PROVIDER_URL!)) // generate a fresh wallet
-                console.log("wallet: ", wallet.address)
+                wallet = ethers.Wallet.createRandom().connect(ethers.getDefaultProvider(process.env.RPC_PROVIDER_URL!))
               }                
 
-              console.log("trying to create a safe")
+              const accountSigner = convertEthersSignerToAccountSigner(wallet)
+              console.log("zd wallet: ", accountSigner)
+              console.log("ARE WE PAST ZD????")
+              // pass the provider into the context
+              const provider = await ZeroDevEthersProvider.init('ECDSA', {
+                projectId: 'a5e8696c-155e-4e1f-966d-79db71302ad5',
+                owner: accountSigner
+              })
 
-              const w2 = (wallet as ethers.Signer);
-
-              console.log(w2.provider);
-
-              const createSafeResult = await createSafe(w2);
-
-              console.log("get address: ", await createSafeResult.getSafeAddress());
-
-
+              console.log("provider: ", provider);
+              const signer = provider.getAccountSigner()
+              console.log("signer address: ", await signer.getAddress())
 
               // *******************
               router.push("/dashboard");

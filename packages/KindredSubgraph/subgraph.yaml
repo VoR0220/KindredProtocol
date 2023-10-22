@@ -27,7 +27,7 @@ dataSources:
           handler: handleBlackListed
         - event: FinalYieldDistribution(address[],uint256[])
           handler: handleFinalYieldDistribution
-        - event: LoanTaken(indexed address,indexed uint256)
+        - event: LoanTaken(indexed address,indexed uint256,indexed uint256)
           handler: handleLoanTaken
         - event: PaymentMade(indexed address,indexed uint256,indexed uint256)
           handler: handlePaymentMade

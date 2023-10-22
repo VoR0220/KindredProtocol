@@ -214,6 +214,15 @@ export class LoanTaken extends Entity {
     this.set("amount", Value.fromBigInt(value));
   }
 
+  get poolId(): BigInt {
+    let value = this.get("poolId");
+    return value!.toBigInt();
+  }
+
+  set poolId(value: BigInt) {
+    this.set("poolId", Value.fromBigInt(value));
+  }
+
   get blockNumber(): BigInt {
     let value = this.get("blockNumber");
     return value!.toBigInt();
@@ -424,5 +433,84 @@ export class PoolRegistered extends Entity {
 
   set transactionHash(value: Bytes) {
     this.set("transactionHash", Value.fromBytes(value));
+  }
+}
+
+export class BalanceChange extends Entity {
+  constructor(id: Bytes) {
+    super();
+    this.set("id", Value.fromBytes(id));
+  }
+
+  save(): void {
+    let id = this.get("id");
+    assert(id != null, "Cannot save BalanceChange entity without an ID");
+    if (id) {
+      assert(
+        id.kind == ValueKind.BYTES,
+        `Entities of type BalanceChange must have an ID of type Bytes but the id '${id.displayData()}' is of type ${id.displayKind()}`
+      );
+      store.set("BalanceChange", id.toBytes().toHexString(), this);
+    }
+  }
+
+  static load(id: Bytes): BalanceChange | null {
+    return changetype<BalanceChange | null>(
+      store.get("BalanceChange", id.toHexString())
+    );
+  }
+
+  get id(): Bytes {
+    let value = this.get("id");
+    return value!.toBytes();
+  }
+
+  set id(value: Bytes) {
+    this.set("id", Value.fromBytes(value));
+  }
+
+  get poolId(): BigInt {
+    let value = this.get("poolId");
+    return value!.toBigInt();
+  }
+
+  set poolId(value: BigInt) {
+    this.set("poolId", Value.fromBigInt(value));
+  }
+
+  get user(): Bytes {
+    let value = this.get("user");
+    return value!.toBytes();
+  }
+
+  set user(value: Bytes) {
+    this.set("user", Value.fromBytes(value));
+  }
+
+  get amount(): BigInt {
+    let value = this.get("amount");
+    return value!.toBigInt();
+  }
+
+  set amount(value: BigInt) {
+    this.set("amount", Value.fromBigInt(value));
+  }
+
+  get isDeposit(): boolean {
+    let value = this.get("isDeposit");
+    return value!.toBoolean();
+  }
+
+  set isDeposit(value: boolean) {
+    this.set("isDeposit", Value.fromBoolean(value));
+  }
+
+  get blockTimestamp(): BigInt {
+    let value = this.get("blockTimestamp");
+    return value!.toBigInt();
+  }
+
+  set blockTimestamp(value: BigInt) {
+    this.set("blockTimestamp", Value.fromBigInt(value));
   }
 }

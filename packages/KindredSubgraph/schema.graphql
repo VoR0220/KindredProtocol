@@ -19,6 +19,7 @@ type LoanTaken @entity(immutable: true) {
   id: Bytes!
   user: Bytes! # address
   amount: BigInt! # uint256
+  poolId: BigInt!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -50,6 +51,6 @@ type BalanceChange @entity(immutable: true) {
   poolId: BigInt!
   user: Bytes!
   amount: BigInt!
-  positiveOrNegative: Boolean!
+  isDeposit: Boolean!
   blockTimestamp: BigInt!
 }

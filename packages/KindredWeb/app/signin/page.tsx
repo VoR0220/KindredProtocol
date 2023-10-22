@@ -117,7 +117,7 @@ export default function SignIn() {
                         pkpPublicKey: pkps[pkps.length - 1].publicKey,
                         expiration: params.expiration,
                         resources: params.resources,
-                        chainId: 1,
+                        chainId: 80001,
                     });
                     return response.authSig;
                 };
@@ -139,7 +139,7 @@ export default function SignIn() {
 
                 const pkpWallet = new PKPEthersWallet({
                   pkpPubKey: pkps[pkps.length - 1].publicKey,
-                  rpc: "https://1rpc.io/gnosis", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis
+                  rpc: "https://rpc-mumbai.maticvigil.com", // e.g. https://rpc.ankr.com/eth_goerli // https://1rpc.io/gnosis // https://polygon-mumbai-bor.publicnode.com
                   controllerSessionSigs: sessionSigs
                 });
                 

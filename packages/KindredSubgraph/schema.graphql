@@ -44,3 +44,12 @@ type PoolRegistered @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+type BalanceChange @entity(immutable: true) {
+  id: Bytes!
+  poolId: BigInt!
+  user: Bytes!
+  amount: BigInt!
+  positiveOrNegative: Boolean!
+  blockTimestamp: BigInt!
+}

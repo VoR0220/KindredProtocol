@@ -10,7 +10,8 @@ import {
 import { ethers, Signer } from 'ethers'
 import { PKPEthersWallet } from '@lit-protocol/pkp-ethers'
 
-export async function createSafe(key: PKPEthersWallet): Promise<AccountAbstraction> {
+
+export async function createSafe(key: PKPEthersWallet | ethers.Signer): Promise<AccountAbstraction> {
 	const relayPack = new GelatoRelayPack(process.env.GELATO_RELAY_API_KEY!)
 	const safeAccountAbstraction = new AccountAbstraction(key)
   	const sdkConfig: AccountAbstractionConfig = {

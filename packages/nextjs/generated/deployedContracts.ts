@@ -1,4 +1,434 @@
 const contracts = {
+  420: [
+    {
+      chainId: "420",
+      name: "optimismGoerli",
+      contracts: {
+        KindredCore: {
+          address: "0xC25BE53059B3793748f6935280ac99224bC7c4Df",
+          abi: [
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "blacklistee",
+                  type: "address",
+                },
+              ],
+              name: "BlackListed",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "address[]",
+                  name: "participants",
+                  type: "address[]",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256[]",
+                  name: "shares",
+                  type: "uint256[]",
+                },
+              ],
+              name: "FinalYieldDistribution",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: true,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "LoanTaken",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: true,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: true,
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "PaymentMade",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+                {
+                  indexed: true,
+                  internalType: "uint256",
+                  name: "payAmount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "address[]",
+                  name: "users",
+                  type: "address[]",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256[]",
+                  name: "dueDates",
+                  type: "uint256[]",
+                },
+              ],
+              name: "PoolRegistered",
+              type: "event",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "address",
+                  name: "_user",
+                  type: "address",
+                },
+                {
+                  internalType: "bool",
+                  name: "_recalibrateLoan",
+                  type: "bool",
+                },
+              ],
+              name: "addToBlacklist",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256[]",
+                  name: "sharesDistribution",
+                  type: "uint256[]",
+                },
+              ],
+              name: "distributeYield",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "generateDemoTimestamps",
+              outputs: [
+                {
+                  internalType: "uint256[4]",
+                  name: "",
+                  type: "uint256[4]",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+              ],
+              name: "getPoolsParticipatingIn",
+              outputs: [
+                {
+                  internalType: "uint256[]",
+                  name: "",
+                  type: "uint256[]",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "isLate",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "users",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "dueDate",
+                  type: "uint256",
+                },
+              ],
+              name: "madePaymentsForDueDate",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "payPool",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "pools",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "payAmount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "currentPot",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "expectedTermPot",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "latefee",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "shares",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint8",
+                  name: "currentDueDate",
+                  type: "uint8",
+                },
+                {
+                  internalType: "enum KindredCore.PoolStage",
+                  name: "stage",
+                  type: "uint8",
+                },
+                {
+                  internalType: "contract CometMainInterface",
+                  name: "vault",
+                  type: "address",
+                },
+                {
+                  internalType: "contract IERC20",
+                  name: "token",
+                  type: "address",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  components: [
+                    {
+                      internalType: "address[]",
+                      name: "participants",
+                      type: "address[]",
+                    },
+                    {
+                      internalType: "uint256[]",
+                      name: "dueDates",
+                      type: "uint256[]",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "payAmount",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "currentPot",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "expectedTermPot",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "latefee",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "shares",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint8",
+                      name: "currentDueDate",
+                      type: "uint8",
+                    },
+                    {
+                      internalType: "enum KindredCore.PoolStage",
+                      name: "stage",
+                      type: "uint8",
+                    },
+                    {
+                      internalType: "contract CometMainInterface",
+                      name: "vault",
+                      type: "address",
+                    },
+                    {
+                      internalType: "contract IERC20",
+                      name: "token",
+                      type: "address",
+                    },
+                  ],
+                  internalType: "struct KindredCore.PoolInfo",
+                  name: "poolToRegister",
+                  type: "tuple",
+                },
+              ],
+              name: "register",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "takeLoan",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "partipants",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "users",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "isBlacklisted",
+                  type: "bool",
+                },
+                {
+                  internalType: "bool",
+                  name: "isParticipant",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+          ],
+        },
+      },
+    },
+  ],
   31337: [
     {
       chainId: "31337",
@@ -433,6 +863,436 @@ const contracts = {
     {
       chainId: "80001",
       name: "polygonMumbai",
+      contracts: {
+        KindredCore: {
+          address: "0x4302989fF604F29C8FfA69dec66C335288475c78",
+          abi: [
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "blacklistee",
+                  type: "address",
+                },
+              ],
+              name: "BlackListed",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: false,
+                  internalType: "address[]",
+                  name: "participants",
+                  type: "address[]",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256[]",
+                  name: "shares",
+                  type: "uint256[]",
+                },
+              ],
+              name: "FinalYieldDistribution",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: true,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+              ],
+              name: "LoanTaken",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  indexed: true,
+                  internalType: "uint256",
+                  name: "amount",
+                  type: "uint256",
+                },
+                {
+                  indexed: true,
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "PaymentMade",
+              type: "event",
+            },
+            {
+              anonymous: false,
+              inputs: [
+                {
+                  indexed: true,
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+                {
+                  indexed: true,
+                  internalType: "uint256",
+                  name: "payAmount",
+                  type: "uint256",
+                },
+                {
+                  indexed: false,
+                  internalType: "address[]",
+                  name: "users",
+                  type: "address[]",
+                },
+                {
+                  indexed: false,
+                  internalType: "uint256[]",
+                  name: "dueDates",
+                  type: "uint256[]",
+                },
+              ],
+              name: "PoolRegistered",
+              type: "event",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "address",
+                  name: "_user",
+                  type: "address",
+                },
+                {
+                  internalType: "bool",
+                  name: "_recalibrateLoan",
+                  type: "bool",
+                },
+              ],
+              name: "addToBlacklist",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256[]",
+                  name: "sharesDistribution",
+                  type: "uint256[]",
+                },
+              ],
+              name: "distributeYield",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [],
+              name: "generateDemoTimestamps",
+              outputs: [
+                {
+                  internalType: "uint256[4]",
+                  name: "",
+                  type: "uint256[4]",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+              ],
+              name: "getPoolsParticipatingIn",
+              outputs: [
+                {
+                  internalType: "uint256[]",
+                  name: "",
+                  type: "uint256[]",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "user",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "isLate",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "users",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "dueDate",
+                  type: "uint256",
+                },
+              ],
+              name: "madePaymentsForDueDate",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "payPool",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "pools",
+              outputs: [
+                {
+                  internalType: "uint256",
+                  name: "payAmount",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "currentPot",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "expectedTermPot",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "latefee",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint256",
+                  name: "shares",
+                  type: "uint256",
+                },
+                {
+                  internalType: "uint8",
+                  name: "currentDueDate",
+                  type: "uint8",
+                },
+                {
+                  internalType: "enum KindredCore.PoolStage",
+                  name: "stage",
+                  type: "uint8",
+                },
+                {
+                  internalType: "contract CometMainInterface",
+                  name: "vault",
+                  type: "address",
+                },
+                {
+                  internalType: "contract IERC20",
+                  name: "token",
+                  type: "address",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  components: [
+                    {
+                      internalType: "address[]",
+                      name: "participants",
+                      type: "address[]",
+                    },
+                    {
+                      internalType: "uint256[]",
+                      name: "dueDates",
+                      type: "uint256[]",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "payAmount",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "currentPot",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "expectedTermPot",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "latefee",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint256",
+                      name: "shares",
+                      type: "uint256",
+                    },
+                    {
+                      internalType: "uint8",
+                      name: "currentDueDate",
+                      type: "uint8",
+                    },
+                    {
+                      internalType: "enum KindredCore.PoolStage",
+                      name: "stage",
+                      type: "uint8",
+                    },
+                    {
+                      internalType: "contract CometMainInterface",
+                      name: "vault",
+                      type: "address",
+                    },
+                    {
+                      internalType: "contract IERC20",
+                      name: "token",
+                      type: "address",
+                    },
+                  ],
+                  internalType: "struct KindredCore.PoolInfo",
+                  name: "poolToRegister",
+                  type: "tuple",
+                },
+              ],
+              name: "register",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "takeLoan",
+              outputs: [],
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              inputs: [
+                {
+                  internalType: "address",
+                  name: "partipants",
+                  type: "address",
+                },
+                {
+                  internalType: "uint256",
+                  name: "poolId",
+                  type: "uint256",
+                },
+              ],
+              name: "users",
+              outputs: [
+                {
+                  internalType: "bool",
+                  name: "isBlacklisted",
+                  type: "bool",
+                },
+                {
+                  internalType: "bool",
+                  name: "isParticipant",
+                  type: "bool",
+                },
+              ],
+              stateMutability: "view",
+              type: "function",
+            },
+          ],
+        },
+      },
+    },
+  ],
+  534351: [
+    {
+      chainId: "534351",
+      name: "scrollSepolia",
       contracts: {
         KindredCore: {
           address: "0xC25BE53059B3793748f6935280ac99224bC7c4Df",

@@ -91,6 +91,10 @@ const config: HardhatUserConfig = {
       url: "https://rpc.gnosischain.com",
       accounts: [deployerPrivateKey],
     },
+    scrollSepolia: {
+      url: "https://sepolia-rpc.scroll.io/",
+      accounts: [deployerPrivateKey]
+    },
     chiado: {
       url: "https://rpc.chiadochain.net",
       accounts: [deployerPrivateKey],

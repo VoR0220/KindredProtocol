@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { useState } from "react";
+import { useState, useContext } from "react";
 import axios from 'axios';
 import { ProviderType } from "@lit-protocol/constants";
 import { LitAuthClient } from "@lit-protocol/lit-auth-client";
@@ -19,6 +19,8 @@ import { ethers } from "ethers";
 import { createSafe } from "../services/safe/safe-aa";
 import { generatePrivateKey } from 'viem/accounts';
 import {convertEthersSignerToAccountSigner, ZeroDevEthersProvider} from '@zerodev/sdk'
+
+import { PKPWalletContext } from "@/components/pkp-wallet-context";
 
 
 interface IStytchResponse {
@@ -46,7 +48,10 @@ export default function SignIn() {
   const [isDisabled, setIsDisabled] = useState(true);
   const [isError, setIsError] = useState(false);
   const [existPhoneNumber, setExistPhoneNumber] = useState(false);
-   
+
+  // Access the context
+  const { setPKPWallet } = useContext(PKPWalletContext);
+
 
     let stytchResponse: IStytchResponse = new Object() as IStytchResponse;
     const [stytchResponseState, setStytchResponseState] = useState(stytchResponse);
@@ -153,9 +158,6 @@ export default function SignIn() {
                   });
                   
                   await (wallet as PKPEthersWallet).init();
-
-                  console.log(wallet);
-
                   // *******************
                   
                   console.log((wallet as PKPEthersWallet).address);
@@ -185,11 +187,16 @@ export default function SignIn() {
               })
 
               console.log("provider: ", provider);
+              console.log("WALLET ISSSSS:", wallet);
+
+              // set the context 
+              setPKPWallet(wallet as PKPEthersWallet);
+
               const signer = provider.getAccountSigner()
               console.log("signer address: ", await signer.getAddress())
 
               // *******************
-              router.push("/dashboard");
+              router.replace("/dashboard");
               // *******************
         
             } catch(error) {

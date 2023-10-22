@@ -44,7 +44,6 @@
     "decimal.js": "^10.4.3",
     "ethereum-public-key-to-address": "^0.0.5",
     "ethers": "5.7.0",
-    "fs": "^0.0.1-security",
     "gray-matter": "^4.0.3",
     "lokijs": "^1.5.12",
     "lucide-react": "^0.284.0",

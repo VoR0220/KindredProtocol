@@ -9,6 +9,7 @@ import { Wallet2 } from 'lucide-react'
 import { Calendar } from 'lucide-react'
 import { PlusCircle } from 'lucide-react'
 import { TrendingUp } from 'lucide-react'
+import { CircleDollarSign } from 'lucide-react';
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -21,6 +22,7 @@ import {
 import { getCircleById } from "@/lib/circles"
 import Decimal from 'decimal.js';
 import { formatPayPeriod } from "@/lib/circles"
+import Wallet from "@/components/wallet"
 
 type CardProps = React.ComponentProps<typeof Card>
 
@@ -39,6 +41,7 @@ export default async function Circle({
     <>
       <Section>
         <Container>
+          <Wallet />
           <SectionHeader title={circle.name} hasMenu={false} />
         </Container>
         <Container>
@@ -73,10 +76,15 @@ export default async function Circle({
                 </div>
               </div>
             </div>
-            <div className="mt-4">
-              <Button className="w-full" variant="outline">
+            <div className="mt-4 grid gap-3 grid-cols-2 grid-rows-1">
+
+              <Button className="w-full text-xs" variant="secondary">
                 <Wallet2 className="mr-2 h-4 w-4"/>
                 Make payment
+              </Button>
+              <Button className="w-full text-xs" variant="outline">
+                <CircleDollarSign className="mr-2 h-4 w-4"/>
+                Withdraw funds
               </Button>
             </div>
           </div>

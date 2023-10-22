@@ -26,7 +26,7 @@ export async function POST(request: NextRequest, response: NextResponse) {
       /*************************************************/
       const creator = await prisma.user.findUnique({
         where: {
-          id: "clnyl625700011e08yisvw12x",
+          id: "clnzviu8g00011erazooeaslh",
         },
       });
 

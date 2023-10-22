@@ -1,31 +1,30 @@
 'use client'
 
-import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { PKPEthersWallet } from "@lit-protocol/pkp-ethers";
 
 interface ProviderProps {
   children: ReactNode;
 }
 
-interface PkpWalletContextType {
-  pkpWallet: null | any; // for now, we don't know what the pkpWallet object looks like
-  setPkpWallet: Dispatch<SetStateAction<null | any>>;
+interface IPKPWalletContext {
+  pkpWallet: PKPEthersWallet | null;
+  setPKPWallet: React.Dispatch<React.SetStateAction<PKPEthersWallet | null>>;
 }
 
-const PkpWalletContext = createContext<PkpWalletContextType>({
+export const PKPWalletContext = createContext<IPKPWalletContext>({
   pkpWallet: null,
-  setPkpWallet: () => null
+  setPKPWallet: () => {},
 });
 
-export const usePkpWallet = () => {
-  return useContext(PkpWalletContext);
-}
+export const PKPWalletProvider = ({ children }: ProviderProps) => {
+  const [pkpWallet, setPKPWallet] = useState<any>(null); // Replace 'any' with your wallet type
 
-export const PkpWalletProvider = ({ children }: ProviderProps) => {
-  const [pkpWallet, setPkpWallet] = useState<null | any>(null);
-  
   return (
-    <PkpWalletContext.Provider value={{ pkpWallet, setPkpWallet }}>
+    <PKPWalletContext.Provider value={{ pkpWallet, setPKPWallet }}>
       {children}
-    </PkpWalletContext.Provider>
+    </PKPWalletContext.Provider>
   );
 };
+
+
